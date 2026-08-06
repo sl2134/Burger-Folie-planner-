@@ -2115,3 +2115,391 @@ tbody select {
     transform: translate(-50%, -50%) scale(28);
   }
 }
+
+/* v27: distinct command-center redesign */
+:root {
+  --ink: #171514;
+  --muted: #6f6860;
+  --canvas: #f3f4f1;
+  --canvas-2: #e6ebe4;
+  --paper: #fffdf8;
+  --paper-strong: #ffffff;
+  --brand: #d63f2f;
+  --brand-hot: #f46045;
+  --brand-dark: #8c2117;
+  --gold: #e4b64a;
+  --green: #208956;
+  --blue: #2f6fe4;
+  --black: #0f1012;
+  --black-2: #1d1b18;
+  --radius: 8px;
+  --radius-sm: 8px;
+  --radius-xs: 6px;
+  --shadow-sm: 0 8px 18px rgba(15, 16, 18, 0.07);
+  --shadow-md: 0 20px 42px rgba(15, 16, 18, 0.11);
+  --shadow-lg: 0 32px 82px rgba(15, 16, 18, 0.22);
+}
+
+body {
+  background:
+    linear-gradient(90deg, rgba(15, 16, 18, 0.035) 0 1px, transparent 1px 84px),
+    linear-gradient(180deg, #fbfaf6 0%, var(--canvas) 52%, var(--canvas-2) 100%);
+}
+
+body::before {
+  background:
+    linear-gradient(120deg, rgba(214, 63, 47, 0.08), transparent 34%),
+    linear-gradient(30deg, transparent 0 56%, rgba(32, 137, 86, 0.08) 56% 78%, transparent 78%);
+}
+
+body::after {
+  opacity: 0.55;
+  background-size: 56px 56px;
+}
+
+.access-card,
+.tool-panel,
+.planning-panel,
+.page-card,
+.share-card {
+  border-radius: var(--radius);
+}
+
+.button,
+.icon-button,
+input,
+select,
+textarea,
+.segment,
+.calendar-day,
+.calendar-person-button,
+#selectedDateLabel,
+.metrics span {
+  border-radius: var(--radius);
+}
+
+.app-header {
+  background:
+    linear-gradient(145deg, rgba(15, 16, 18, 0.98), rgba(29, 27, 24, 0.96)),
+    var(--black);
+}
+
+.brand-logo,
+.menu-logo {
+  border-radius: var(--radius);
+}
+
+.button.primary {
+  background: linear-gradient(135deg, var(--brand-hot), var(--brand) 52%, var(--brand-dark));
+}
+
+.button.ghost {
+  background: #ffffff;
+}
+
+.tool-panel,
+.page-card {
+  background: rgba(255, 255, 255, 0.94);
+}
+
+.planning-panel {
+  background: #ffffff;
+}
+
+.planning-head {
+  background:
+    linear-gradient(135deg, rgba(214, 63, 47, 0.16), transparent 36%),
+    linear-gradient(150deg, #101113, #221f1b);
+}
+
+.calendar-panel,
+.table-shell {
+  background: #ffffff;
+}
+
+.calendar-day {
+  background: #fbfaf7;
+}
+
+.calendar-day.is-selected {
+  background:
+    linear-gradient(145deg, #111214, #25211c 60%, #381c15);
+}
+
+@media (min-width: 1100px) {
+  body:not(.is-access-locked) {
+    min-height: 100vh;
+  }
+
+  body:not(.is-access-locked)::before {
+    left: 320px;
+  }
+
+  body:not(.is-access-locked) .app-header {
+    position: fixed;
+    inset: 14px auto 14px 14px;
+    width: 304px;
+    min-height: calc(100vh - 28px);
+    display: grid;
+    grid-template-rows: auto 1fr;
+    align-items: start;
+    gap: 24px;
+    padding: 20px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 10px;
+    box-shadow: 0 24px 70px rgba(15, 16, 18, 0.28);
+  }
+
+  body:not(.is-access-locked) .app-header::before {
+    opacity: 0.48;
+    background:
+      linear-gradient(120deg, rgba(214, 63, 47, 0.28), transparent 38%),
+      repeating-linear-gradient(135deg, transparent 0 22px, rgba(255, 255, 255, 0.06) 22px 23px);
+    animation: none;
+  }
+
+  body:not(.is-access-locked) .app-header::after {
+    top: 0;
+    right: -1px;
+    bottom: 0;
+    left: auto;
+    width: 4px;
+    height: auto;
+    background: linear-gradient(180deg, var(--brand), var(--gold) 44%, var(--green));
+    animation: none;
+  }
+
+  body:not(.is-access-locked) .header-main {
+    width: 100%;
+    display: grid;
+    grid-template-columns: 48px minmax(0, 1fr);
+    gap: 14px;
+    align-items: start;
+  }
+
+  body:not(.is-access-locked) .menu-button {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius);
+  }
+
+  body:not(.is-access-locked) .brand-lockup {
+    display: grid;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 12px;
+    align-items: center;
+  }
+
+  body:not(.is-access-locked) .brand-logo {
+    width: 64px;
+    height: 64px;
+  }
+
+  body:not(.is-access-locked) .brand-lockup h1 {
+    max-width: 150px;
+    white-space: normal;
+    font-size: 1.55rem;
+  }
+
+  body:not(.is-access-locked) .active-page-label {
+    width: fit-content;
+    min-height: 24px;
+    margin-top: 8px;
+  }
+
+  body:not(.is-access-locked) .header-actions {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    display: grid;
+    grid-template-columns: 1fr;
+    align-content: end;
+    gap: 12px;
+    align-self: end;
+  }
+
+  body:not(.is-access-locked) .header-actions::before {
+    content: "Exports";
+    display: block;
+    margin: 0 0 2px;
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 0.72rem;
+    font-weight: 950;
+    text-transform: uppercase;
+  }
+
+  body:not(.is-access-locked) .header-actions .button {
+    width: 100%;
+    min-height: 54px;
+    justify-content: flex-start;
+    padding: 0 16px;
+    border-radius: var(--radius);
+    font-size: 0.96rem;
+  }
+
+  body:not(.is-access-locked) .header-actions .button.ghost {
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.08);
+  }
+
+  body:not(.is-access-locked) .header-actions .button.whatsapp {
+    background: linear-gradient(135deg, #22bd70, #147d50);
+  }
+
+  body:not(.is-access-locked) main {
+    width: auto;
+    min-height: 100vh;
+    margin-left: 332px;
+    padding: 14px 18px 34px 0;
+  }
+
+  body:not(.is-access-locked) .planner-layout {
+    width: min(1440px, calc(100vw - 366px));
+    margin: 0 auto;
+    grid-template-columns: minmax(340px, 420px) minmax(0, 1fr);
+    gap: 18px;
+  }
+
+  body:not(.is-access-locked) .people-page {
+    width: min(920px, calc(100vw - 366px));
+    margin: 0 auto;
+  }
+
+  body:not(.is-access-locked) .tool-panel {
+    top: 14px;
+    min-height: calc(100vh - 28px);
+    align-content: start;
+    padding: 22px;
+  }
+
+  body:not(.is-access-locked) .planning-panel {
+    min-height: calc(100vh - 28px);
+  }
+
+  body:not(.is-access-locked) .planning-head {
+    min-height: 170px;
+    align-items: center;
+    padding: 28px;
+  }
+
+  body:not(.is-access-locked) .planning-head h2 {
+    max-width: 560px;
+    font-size: clamp(2rem, 4vw, 4.3rem);
+  }
+
+  body:not(.is-access-locked) .metrics {
+    display: grid;
+    grid-template-columns: 1fr;
+    min-width: 220px;
+  }
+
+  body:not(.is-access-locked) .metrics span {
+    justify-content: space-between;
+    min-width: 0;
+    min-height: 42px;
+    padding: 0 14px;
+  }
+
+  body:not(.is-access-locked) .calendar-panel {
+    padding: 24px 28px 22px;
+  }
+
+  body:not(.is-access-locked) .calendar-day {
+    min-height: 92px;
+  }
+
+  body:not(.is-access-locked) .calendar-day-number {
+    font-size: clamp(1.35rem, 2.35vw, 2rem);
+  }
+
+  body:not(.is-access-locked) .table-shell {
+    padding: 0 28px 28px;
+  }
+
+  body:not(.is-access-locked) .app-menu {
+    top: 24px;
+    left: 332px;
+    width: 300px;
+    border-radius: var(--radius);
+  }
+}
+
+@media (min-width: 1100px) and (max-width: 1399px) {
+  body:not(.is-access-locked) .planner-layout {
+    grid-template-columns: 1fr;
+  }
+
+  body:not(.is-access-locked) .tool-panel {
+    position: relative;
+    top: auto;
+    min-height: 0;
+  }
+
+  body:not(.is-access-locked) .planning-panel {
+    min-height: 0;
+  }
+}
+
+@media (min-width: 1400px) {
+  body:not(.is-access-locked) .planner-layout {
+    grid-template-columns: minmax(360px, 430px) minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 1099px) {
+  .app-header {
+    border-radius: 0;
+  }
+
+  .planner-layout,
+  .people-page {
+    margin-top: 16px;
+  }
+
+  .planning-panel,
+  .tool-panel,
+  .page-card {
+    border-radius: var(--radius);
+  }
+}
+
+@media (max-width: 760px) {
+  .app-header {
+    gap: 10px;
+    padding: 10px;
+  }
+
+  .brand-lockup h1 {
+    font-size: 0.98rem;
+  }
+
+  .header-actions .button {
+    min-height: 50px;
+    border-radius: var(--radius);
+  }
+
+  .planner-layout,
+  .people-page {
+    width: calc(100vw - 18px);
+    margin-top: 10px;
+  }
+
+  .tool-panel,
+  .page-card {
+    padding: 14px;
+  }
+
+  .planning-head {
+    min-height: 150px;
+    padding: 18px 14px;
+  }
+
+  .planning-head h2 {
+    font-size: 1.9rem;
+  }
+
+  .calendar-day {
+    border-radius: var(--radius);
+  }
+}

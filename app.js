@@ -1,4 +1,6 @@
 const STORAGE_KEY = "burger-folie-planner-v2";
+const ACCESS_STORAGE_KEY = "burger-folie-access-v1";
+const ACCESS_HASH = "178980ca09a479911ee12e3292adfdf8e0be448383c5dea96a21588d55e834b6";
 const LOGO_URL = "./assets/burger-folie-logo.png";
 const DEFAULT_END_TIME = "22:00";
 const REGULAR_STARTS = {
@@ -14,6 +16,10 @@ const PAGE_LABELS = {
 };
 
 const elements = {
+  accessGate: document.getElementById("accessGate"),
+  accessForm: document.getElementById("accessForm"),
+  accessInput: document.getElementById("accessInput"),
+  accessStatus: document.getElementById("accessStatus"),
   menuButton: document.getElementById("menuButton"),
   menuBackdrop: document.getElementById("menuBackdrop"),
   appMenu: document.getElementById("appMenu"),
@@ -78,8 +84,22 @@ let selectedDateIso = "";
 let calendarCursorDate = new Date();
 let preparedShareUrls = [];
 let preparedNativeFiles = [];
+let appStarted = false;
+let accessFormBound = false;
 
-function boot() {
+async function boot() {
+  if (!await ensureAccess()) {
+    return;
+  }
+  startApp();
+}
+
+function startApp() {
+  if (appStarted) {
+    return;
+  }
+  appStarted = true;
+
   const today = new Date();
   selectedDateIso = toIsoDate(today);
   calendarCursorDate = new Date(today.getFullYear(), today.getMonth(), 1);
@@ -104,6 +124,132 @@ function boot() {
   render();
   syncPageFromHash();
   registerServiceWorker();
+}
+
+async function ensureAccess() {
+  const hashAccess = getAccessFromHash();
+  if (hashAccess) {
+    if (await isAccessValid(hashAccess.code)) {
+      localStorage.setItem(ACCESS_STORAGE_KEY, "granted");
+      unlockAccess(hashAccess.page);
+      return true;
+    }
+    showAccessGate("That access key is not valid.");
+    return false;
+  }
+
+  if (localStorage.getItem(ACCESS_STORAGE_KEY) === "granted") {
+    unlockAccess(getPageFromHash());
+    return true;
+  }
+
+  showAccessGate("");
+  return false;
+}
+
+function showAccessGate(message) {
+  document.body.classList.add("is-access-locked");
+  elements.accessGate?.classList.remove("is-hidden");
+  if (elements.accessStatus) {
+    elements.accessStatus.textContent = message || "Use the private Burger Folie link, or paste the access key.";
+    elements.accessStatus.classList.toggle("is-error", Boolean(message));
+  }
+  bindAccessForm();
+  window.setTimeout(() => elements.accessInput?.focus(), 80);
+}
+
+function bindAccessForm() {
+  if (accessFormBound || !elements.accessForm) {
+    return;
+  }
+  accessFormBound = true;
+  elements.accessForm.addEventListener("submit", async event => {
+    event.preventDefault();
+    const code = elements.accessInput.value.trim();
+    if (!code) {
+      showAccessGate("Paste the private access key first.");
+      return;
+    }
+    if (!await isAccessValid(code)) {
+      elements.accessInput.select();
+      showAccessGate("That access key is not valid.");
+      return;
+    }
+    localStorage.setItem(ACCESS_STORAGE_KEY, "granted");
+    unlockAccess(getPageFromHash());
+    startApp();
+  });
+}
+
+function unlockAccess(page = "planner") {
+  document.body.classList.remove("is-access-locked");
+  elements.accessGate?.classList.add("is-hidden");
+  sanitizeAccessHash(page);
+}
+
+function getAccessFromHash() {
+  const raw = location.hash.slice(1);
+  if (!raw) {
+    return null;
+  }
+
+  const params = new URLSearchParams(raw);
+  const code = params.get("access") || params.get("key") || params.get("bf");
+  if (code) {
+    return {
+      code,
+      page: PAGE_LABELS[params.get("page")] ? params.get("page") : "planner"
+    };
+  }
+
+  if (raw !== "people" && raw.length > 24 && !raw.includes("=")) {
+    return { code: raw, page: "planner" };
+  }
+
+  return null;
+}
+
+function getPageFromHash() {
+  const raw = location.hash.slice(1);
+  if (raw === "people") {
+    return "people";
+  }
+  const params = new URLSearchParams(raw);
+  return PAGE_LABELS[params.get("page")] ? params.get("page") : "planner";
+}
+
+function sanitizeAccessHash(page) {
+  if (!getAccessFromHash()) {
+    return;
+  }
+  const nextUrl = page === "people"
+    ? `${location.pathname}${location.search}#people`
+    : `${location.pathname}${location.search}`;
+  history.replaceState(null, "", nextUrl);
+}
+
+async function isAccessValid(code) {
+  if (!code || !window.crypto?.subtle || !window.TextEncoder) {
+    return false;
+  }
+  const encoded = new TextEncoder().encode(code.trim());
+  const digest = await window.crypto.subtle.digest("SHA-256", encoded);
+  return timingSafeEqual(bytesToHex(new Uint8Array(digest)), ACCESS_HASH);
+}
+
+function bytesToHex(bytes) {
+  return [...bytes].map(byte => byte.toString(16).padStart(2, "0")).join("");
+}
+
+function timingSafeEqual(left, right) {
+  if (left.length !== right.length) {
+    return false;
+  }
+  let difference = 0;
+  for (let index = 0; index < left.length; index += 1) {
+    difference |= left.charCodeAt(index) ^ right.charCodeAt(index);
+  }
+  return difference === 0;
 }
 
 function bindEvents() {

@@ -7,9 +7,20 @@ const REGULAR_STARTS = {
 };
 
 const weekdays = ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"];
-const calendarWeekdays = ["ma", "di", "wo", "do", "vr", "za", "zo"];
+const calendarWeekdays = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
+const PAGE_LABELS = {
+  planner: "Planner",
+  people: "People"
+};
 
 const elements = {
+  menuButton: document.getElementById("menuButton"),
+  menuBackdrop: document.getElementById("menuBackdrop"),
+  appMenu: document.getElementById("appMenu"),
+  activePageLabel: document.getElementById("activePageLabel"),
+  pageViews: document.querySelectorAll("[data-page-view]"),
+  menuLinks: document.querySelectorAll("[data-page]"),
+  pageJumpButtons: document.querySelectorAll("[data-page-target]"),
   titleInput: document.getElementById("titleInput"),
   weekStartInput: document.getElementById("weekStartInput"),
   weekEndInput: document.getElementById("weekEndInput"),
@@ -30,20 +41,24 @@ const elements = {
   clearShiftsButton: document.getElementById("clearShiftsButton"),
   resetFormButton: document.getElementById("resetFormButton"),
   pdfButton: document.getElementById("pdfButton"),
+  pdfButtonLabel: document.querySelector("#pdfButton .button-text"),
   appleCalendarButton: document.getElementById("appleCalendarButton"),
   googleCalendarButton: document.getElementById("googleCalendarButton"),
   whatsappButton: document.getElementById("whatsappButton"),
+  whatsappButtonLabel: document.querySelector("#whatsappButton .button-text"),
   shareOverlay: document.getElementById("shareOverlay"),
   whatsappMessage: document.getElementById("whatsappMessage"),
   sharePdfLink: document.getElementById("sharePdfLink"),
   shareAppleLink: document.getElementById("shareAppleLink"),
   shareGoogleLink: document.getElementById("shareGoogleLink"),
+  nativeShareButton: document.getElementById("nativeShareButton"),
   downloadAllShareButton: document.getElementById("downloadAllShareButton"),
   copyWhatsappButton: document.getElementById("copyWhatsappButton"),
   openWhatsappLink: document.getElementById("openWhatsappLink"),
   closeShareButton: document.getElementById("closeShareButton"),
   saveButton: document.getElementById("saveButton"),
   saveState: document.getElementById("saveState"),
+  plannerSaveState: document.getElementById("plannerSaveState"),
   previewTitle: document.getElementById("previewTitle"),
   peopleCount: document.getElementById("peopleCount"),
   shiftCount: document.getElementById("shiftCount"),
@@ -62,6 +77,7 @@ let saveTimer = 0;
 let selectedDateIso = "";
 let calendarCursorDate = new Date();
 let preparedShareUrls = [];
+let preparedNativeFiles = [];
 
 function boot() {
   const today = new Date();
@@ -86,10 +102,31 @@ function boot() {
   updateRegularStartOptions();
   updateTimeModeControls();
   render();
+  syncPageFromHash();
   registerServiceWorker();
 }
 
 function bindEvents() {
+  elements.menuButton.addEventListener("click", toggleMenu);
+  elements.menuBackdrop.addEventListener("click", closeMenu);
+  window.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      closeMenu();
+      closeSharePanel();
+    }
+  });
+  elements.appMenu.addEventListener("click", event => {
+    const button = event.target.closest("button[data-page]");
+    if (!button) {
+      return;
+    }
+    showPage(button.dataset.page);
+  });
+  elements.pageJumpButtons.forEach(button => {
+    button.addEventListener("click", () => showPage(button.dataset.pageTarget));
+  });
+  window.addEventListener("hashchange", syncPageFromHash);
+
   elements.personForm.addEventListener("submit", event => {
     event.preventDefault();
     addPerson(elements.personInput.value);
@@ -132,7 +169,7 @@ function bindEvents() {
     setStatus("Cleared");
   });
 
-  elements.saveButton.addEventListener("click", () => {
+  elements.saveButton?.addEventListener("click", () => {
     saveState();
     setStatus("Saved");
   });
@@ -149,11 +186,12 @@ function bindEvents() {
   });
   elements.copyWhatsappButton.addEventListener("click", async () => {
     const copied = await copyText(elements.whatsappMessage.value);
-    setStatus(copied ? "Bericht gekopieerd" : "Kopieren niet mogelijk");
+    setStatus(copied ? "Message copied" : "Copy unavailable");
   });
+  elements.nativeShareButton.addEventListener("click", shareNativePackage);
   elements.downloadAllShareButton.addEventListener("click", () => {
     downloadPreparedShareFiles();
-    setStatus("Bestanden gedownload");
+    setStatus("Downloads started");
   });
 
   elements.prevMonthButton.addEventListener("click", () => {
@@ -259,6 +297,45 @@ function bindEvents() {
     render();
     saveState();
   });
+}
+
+function toggleMenu() {
+  const isOpen = elements.appMenu.classList.toggle("is-open");
+  elements.menuBackdrop.classList.toggle("is-hidden", !isOpen);
+  elements.menuButton.setAttribute("aria-expanded", String(isOpen));
+}
+
+function closeMenu() {
+  elements.appMenu.classList.remove("is-open");
+  elements.menuBackdrop.classList.add("is-hidden");
+  elements.menuButton.setAttribute("aria-expanded", "false");
+}
+
+function showPage(page, options = {}) {
+  const nextPage = PAGE_LABELS[page] ? page : "planner";
+  elements.pageViews.forEach(view => {
+    const isActive = view.dataset.pageView === nextPage;
+    view.classList.toggle("is-active", isActive);
+    view.setAttribute("aria-hidden", String(!isActive));
+  });
+  elements.menuLinks.forEach(link => {
+    link.classList.toggle("is-active", link.dataset.page === nextPage);
+  });
+  elements.activePageLabel.textContent = PAGE_LABELS[nextPage];
+  closeMenu();
+
+  if (options.updateHash !== false) {
+    const nextUrl = nextPage === "planner"
+      ? `${location.pathname}${location.search}`
+      : `#${nextPage}`;
+    history.replaceState(null, "", nextUrl);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+function syncPageFromHash() {
+  const page = location.hash.replace("#", "");
+  showPage(page === "people" ? "people" : "planner", { updateHash: false });
 }
 
 function selectDate(dateIso, options = {}) {
@@ -444,7 +521,7 @@ function renderPeople() {
     chip.className = "person-chip";
     chip.innerHTML = `
       <span>${escapeHtml(person)}</span>
-      <button type="button" data-person="${escapeAttribute(person)}" title="Remove ${escapeAttribute(person)}" aria-label="Remove ${escapeAttribute(person)}">x</button>
+      <button type="button" data-person="${escapeAttribute(person)}" title="Remove ${escapeAttribute(person)}" aria-label="Remove ${escapeAttribute(person)}">×</button>
     `;
     fragment.appendChild(chip);
   });
@@ -487,11 +564,11 @@ function renderCalendarPeople() {
 
 function renderCalendar() {
   const monthStart = new Date(calendarCursorDate.getFullYear(), calendarCursorDate.getMonth(), 1);
-  elements.calendarMonthLabel.textContent = new Intl.DateTimeFormat("nl-BE", {
+  elements.calendarMonthLabel.textContent = new Intl.DateTimeFormat("en-GB", {
     month: "long",
     year: "numeric"
   }).format(monthStart);
-  elements.selectedDateLabel.textContent = selectedDateIso ? formatDateLong(selectedDateIso) : "No date selected";
+  elements.selectedDateLabel.textContent = selectedDateIso ? formatDateLongUi(selectedDateIso) : "No date selected";
 
   const shiftMap = shiftsByDate();
   const todayIso = toIsoDate(new Date());
@@ -506,7 +583,7 @@ function renderCalendar() {
     button.type = "button";
     button.className = "calendar-day";
     button.dataset.date = iso;
-    button.setAttribute("aria-label", `${formatDateLong(iso)}, ${dayShifts.length} shifts`);
+    button.setAttribute("aria-label", `${formatDateLongUi(iso)}, ${dayShifts.length} shifts`);
     button.classList.toggle("is-outside", date.getMonth() !== monthStart.getMonth());
     button.classList.toggle("is-selected", iso === selectedDateIso);
     button.classList.toggle("is-today", iso === todayIso);
@@ -562,14 +639,14 @@ function renderTable() {
     const row = document.createElement("tr");
     row.dataset.id = shift.id;
     row.innerHTML = `
-      <td class="date-cell"><input aria-label="Date" data-field="date" type="date" value="${escapeAttribute(shift.date)}"></td>
-      <td class="person-cell">${personSelectHtml(shift.name)}</td>
-      <td class="time-cell"><input aria-label="Start time" data-field="start" type="time" value="${escapeAttribute(shift.start)}"></td>
-      <td class="time-cell"><input aria-label="End time" data-field="end" type="time" value="${escapeAttribute(shift.end)}"></td>
-      <td>
+      <td class="date-cell" data-label="Date"><input aria-label="Date" data-field="date" type="date" value="${escapeAttribute(shift.date)}"></td>
+      <td class="person-cell" data-label="Person">${personSelectHtml(shift.name)}</td>
+      <td class="time-cell" data-label="Start"><input aria-label="Start time" data-field="start" type="time" value="${escapeAttribute(shift.start)}"></td>
+      <td class="time-cell" data-label="End"><input aria-label="End time" data-field="end" type="time" value="${escapeAttribute(shift.end)}"></td>
+      <td data-label="Actions">
         <div class="row-actions">
           <button type="button" class="icon-button" data-action="copy" title="Duplicate" aria-label="Duplicate">+</button>
-          <button type="button" class="icon-button delete" data-action="delete" title="Delete" aria-label="Delete">x</button>
+          <button type="button" class="icon-button delete" data-action="delete" title="Delete" aria-label="Delete">×</button>
         </div>
       </td>
     `;
@@ -624,7 +701,7 @@ function readStoredState() {
 
 function queueSave() {
   window.clearTimeout(saveTimer);
-  elements.saveState.textContent = "Editing";
+  setSaveIndicators("Editing");
   saveTimer = window.setTimeout(saveState, 450);
 }
 
@@ -637,19 +714,27 @@ function saveState() {
     shifts
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-  elements.saveState.textContent = "Saved";
+  setSaveIndicators("Saved");
 }
 
 function setStatus(message) {
-  elements.saveState.textContent = message;
+  setSaveIndicators(message);
   window.setTimeout(() => {
-    elements.saveState.textContent = "Saved";
+    setSaveIndicators("Saved");
   }, 1800);
+}
+
+function setSaveIndicators(message) {
+  [elements.saveState, elements.plannerSaveState].forEach(element => {
+    if (element) {
+      element.textContent = message;
+    }
+  });
 }
 
 async function exportPdf() {
   elements.pdfButton.disabled = true;
-  elements.pdfButton.textContent = "Making PDF";
+  setButtonLabel(elements.pdfButton, "Making PDF");
 
   try {
     const pdf = await createPdfBlob();
@@ -662,7 +747,7 @@ async function exportPdf() {
     alert("The PDF could not be created.");
   } finally {
     elements.pdfButton.disabled = false;
-    elements.pdfButton.textContent = "Export PDF";
+    setButtonLabel(elements.pdfButton, "Export PDF");
   }
 }
 
@@ -685,7 +770,7 @@ async function shareToWhatsApp() {
   }
 
   elements.whatsappButton.disabled = true;
-  elements.whatsappButton.textContent = "Preparing";
+  setButtonLabel(elements.whatsappButton, "Preparing");
 
   try {
     const message = buildWhatsappMessage();
@@ -705,14 +790,14 @@ async function shareToWhatsApp() {
     });
     window.setTimeout(downloadPreparedShareFiles, 120);
     await copyText(message);
-    setStatus("Bestanden gedownload");
+    setStatus("Share package ready");
   } catch (error) {
     console.error(error);
     setStatus("Share error");
     alert("The WhatsApp share could not be prepared.");
   } finally {
     elements.whatsappButton.disabled = false;
-    elements.whatsappButton.textContent = "Share WhatsApp";
+    setButtonLabel(elements.whatsappButton, "WhatsApp");
   }
 }
 
@@ -723,8 +808,9 @@ function openSharePanel({ message, whatsappUrl, files }) {
   setDownloadLink(elements.sharePdfLink, files.pdf);
   setDownloadLink(elements.shareAppleLink, files.apple);
   setDownloadLink(elements.shareGoogleLink, files.google);
+  prepareNativeShareFiles(files, message);
   elements.shareOverlay.classList.remove("is-hidden");
-  elements.copyWhatsappButton.focus();
+  (elements.nativeShareButton.hidden ? elements.copyWhatsappButton : elements.nativeShareButton).focus();
 }
 
 function closeSharePanel() {
@@ -738,6 +824,50 @@ function setDownloadLink(link, file) {
   link.download = file.filename;
 }
 
+function prepareNativeShareFiles(files, message) {
+  preparedNativeFiles = [];
+
+  if (typeof File !== "function" || !navigator.share) {
+    elements.nativeShareButton.hidden = true;
+    return;
+  }
+
+  preparedNativeFiles = [
+    new File([files.pdf.blob], files.pdf.filename, { type: "application/pdf" }),
+    new File([files.apple.blob], files.apple.filename, { type: "text/calendar" }),
+    new File([files.google.blob], files.google.filename, { type: "text/calendar" })
+  ];
+
+  const payload = {
+    title: elements.titleInput.value.trim() || "Planning Burger Folie",
+    text: message,
+    files: preparedNativeFiles
+  };
+
+  elements.nativeShareButton.hidden = Boolean(navigator.canShare) && !navigator.canShare(payload);
+}
+
+async function shareNativePackage() {
+  if (!navigator.share || !preparedNativeFiles.length) {
+    setStatus("Share unavailable");
+    return;
+  }
+
+  try {
+    await navigator.share({
+      title: elements.titleInput.value.trim() || "Planning Burger Folie",
+      text: elements.whatsappMessage.value,
+      files: preparedNativeFiles
+    });
+    setStatus("Share opened");
+  } catch (error) {
+    if (error?.name !== "AbortError") {
+      console.error(error);
+      setStatus("Share unavailable");
+    }
+  }
+}
+
 function downloadPreparedShareFiles() {
   [elements.sharePdfLink, elements.shareAppleLink, elements.shareGoogleLink].forEach(link => {
     if (link.href && link.href !== "#") {
@@ -749,6 +879,16 @@ function downloadPreparedShareFiles() {
 function revokePreparedShareUrls() {
   preparedShareUrls.forEach(url => URL.revokeObjectURL(url));
   preparedShareUrls = [];
+  preparedNativeFiles = [];
+}
+
+function setButtonLabel(button, label) {
+  const text = button.querySelector(".button-text");
+  if (text) {
+    text.textContent = label;
+  } else {
+    button.textContent = label;
+  }
 }
 
 async function createPdfBlob() {
@@ -1330,6 +1470,15 @@ function formatDateLong(iso) {
   }
   const date = dateFromIso(iso);
   const weekday = weekdays[date.getDay()];
+  return `${weekday} ${formatDateShort(iso)}`;
+}
+
+function formatDateLongUi(iso) {
+  if (!iso || iso === "No date") {
+    return "No date";
+  }
+  const date = dateFromIso(iso);
+  const weekday = new Intl.DateTimeFormat("en-GB", { weekday: "long" }).format(date);
   return `${weekday} ${formatDateShort(iso)}`;
 }
 

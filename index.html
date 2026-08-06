@@ -15,116 +15,160 @@
 </head>
 <body>
   <header class="app-header">
-    <div class="brand-lockup">
-      <img src="./assets/burger-folie-logo.png" alt="Burger Folie" class="brand-logo">
-      <div>
-        <p class="eyebrow">Offline planning</p>
-        <h1>Burger Folie Timeplanning</h1>
+    <div class="header-main">
+      <button type="button" class="menu-button" id="menuButton" aria-controls="appMenu" aria-expanded="false" aria-label="Open menu">
+        <span></span>
+        <span></span>
+        <span></span>
+      </button>
+      <div class="brand-lockup">
+        <img src="./assets/burger-folie-logo.png" alt="Burger Folie" class="brand-logo">
+        <div>
+          <h1>Burger Folie Timeplanning</h1>
+          <span id="activePageLabel" class="active-page-label">Planner</span>
+        </div>
       </div>
     </div>
-    <div class="header-actions">
-      <button type="button" class="button ghost" id="saveButton">
-        Save
+    <div class="header-actions" aria-label="Export actions">
+      <button type="button" class="button primary action-button" id="pdfButton">
+        <span class="button-icon icon-pdf" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M7 3h7l4 4v14H7z"></path>
+            <path d="M14 3v5h4"></path>
+            <path d="M9 16h6"></path>
+            <path d="M9 12h3"></path>
+          </svg>
+        </span>
+        <span class="button-text">Export PDF</span>
       </button>
-      <button type="button" class="button primary" id="pdfButton">
-        Export PDF
+      <button type="button" class="button ghost action-button" id="appleCalendarButton">
+        <span class="brand-icon apple-mark" aria-hidden="true"></span>
+        <span class="button-text">Apple Calendar</span>
       </button>
-      <button type="button" class="button ghost" id="appleCalendarButton">
-        Apple Calendar
+      <button type="button" class="button ghost action-button" id="googleCalendarButton">
+        <span class="brand-icon google-mark" aria-hidden="true">G</span>
+        <span class="button-text">Google Calendar</span>
       </button>
-      <button type="button" class="button ghost" id="googleCalendarButton">
-        Google Calendar
-      </button>
-      <button type="button" class="button whatsapp" id="whatsappButton">
-        Share WhatsApp
+      <button type="button" class="button whatsapp action-button" id="whatsappButton">
+        <span class="brand-icon whatsapp-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 3.5a8.3 8.3 0 0 0-7.1 12.6L4 20.5l4.5-1.1A8.3 8.3 0 1 0 12 3.5z"></path>
+            <path d="M9.2 8.1c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.7c.1.3 0 .5-.2.7l-.4.5c.6 1.1 1.5 2 2.7 2.7l.5-.4c.2-.2.4-.3.7-.2l1.7.8c.3.1.4.3.4.6v.4c0 .3 0 .5-.4.7-.5.3-1.1.5-1.8.5-2.5 0-6.6-3.6-6.6-6.5 0-.6.2-1.2.5-1.7z"></path>
+          </svg>
+        </span>
+        <span class="button-text">WhatsApp</span>
       </button>
     </div>
   </header>
 
-  <main class="planner-layout">
-    <section class="tool-panel" aria-label="Planning editor">
-      <div class="section-title">
-        <h2>Document</h2>
-        <span id="saveState">Ready</span>
+  <div class="menu-backdrop is-hidden" id="menuBackdrop"></div>
+  <nav class="app-menu" id="appMenu" aria-label="App pages">
+    <div class="app-menu-head">
+      <img src="./assets/burger-folie-logo.png" alt="" class="menu-logo">
+      <div>
+        <strong>Burger Folie</strong>
+        <span>Timeplanning</span>
       </div>
+    </div>
+    <button type="button" class="menu-link is-active" data-page="planner">Planner</button>
+    <button type="button" class="menu-link" data-page="people">People</button>
+  </nav>
 
-      <div class="field-grid">
-        <label class="field wide">
-          <span>Title</span>
-          <input id="titleInput" type="text" value="Planning Burger Folie">
-        </label>
-        <label class="field">
-          <span>Week from</span>
-          <input id="weekStartInput" type="date">
-        </label>
-        <label class="field">
-          <span>Week until</span>
-          <input id="weekEndInput" type="date">
-        </label>
-      </div>
-
+  <main>
+    <section class="page-view people-page" id="peoplePage" data-page-view="people" aria-label="People page">
       <form id="personForm" class="people-form">
-        <div class="section-title compact">
-          <h2>People</h2>
-        </div>
-        <div class="inline-form">
-          <label class="field grow">
-            <span>Name</span>
-            <input id="personInput" type="text" autocomplete="off" placeholder="Floor, Ava, Seth">
-          </label>
-          <button type="submit" class="button primary">
-            Add
-          </button>
-        </div>
-        <div id="peopleList" class="people-list" aria-label="People list"></div>
-      </form>
-
-      <form id="shiftForm" class="shift-form">
-        <div class="section-title compact">
-          <h2>Shift</h2>
-        </div>
-        <div class="field-grid">
-          <label class="field wide">
-            <span>Person</span>
-            <select id="personSelect" required></select>
-          </label>
-          <label class="field">
-            <span>Date</span>
-            <input id="dateInput" type="date" required>
-          </label>
-          <label class="field">
-            <span>Time</span>
-            <span class="segment" role="radiogroup" aria-label="Time mode">
-              <input type="radio" name="timeMode" id="regularTimeMode" value="regular" checked>
-              <label for="regularTimeMode">Regular</label>
-              <input type="radio" name="timeMode" id="customTimeMode" value="custom">
-              <label for="customTimeMode">Custom</label>
-            </span>
-          </label>
-          <label class="field" id="regularStartField">
-            <span>Regular start</span>
-            <span id="regularStartButtons" class="time-button-bar"></span>
-          </label>
-          <label class="field is-hidden" id="customStartField">
-            <span>Custom start</span>
-            <input id="startInput" type="time" required>
-          </label>
-          <label class="field">
-            <span>End</span>
-            <input id="endInput" type="time">
-          </label>
-        </div>
-        <div class="button-row">
-          <button type="submit" class="button primary">
-            Add shift
-          </button>
-          <button type="button" class="button ghost" id="resetFormButton">Reset</button>
-          <button type="button" class="button danger" id="clearShiftsButton">Clear shifts</button>
+        <div class="page-card">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Team</p>
+              <h2>People</h2>
+            </div>
+            <span id="saveState">Ready</span>
+          </div>
+          <div class="inline-form people-page-form">
+            <label class="field grow">
+              <span>Name</span>
+              <input id="personInput" type="text" autocomplete="off" placeholder="Floor, Ava, Seth">
+            </label>
+            <button type="submit" class="button primary">
+              Add person
+            </button>
+          </div>
+          <div id="peopleList" class="people-list people-page-list" aria-label="People list"></div>
+          <button type="button" class="button ghost page-jump" data-page-target="planner">Back to planner</button>
         </div>
       </form>
     </section>
 
-    <section class="planning-panel" aria-label="Planning preview">
+    <section class="page-view is-active" id="plannerPage" data-page-view="planner" aria-label="Planner page">
+      <div class="planner-layout">
+        <section class="tool-panel" aria-label="Planning editor">
+          <div class="section-title">
+            <h2>Document</h2>
+            <span id="plannerSaveState">Ready</span>
+          </div>
+
+          <div class="field-grid">
+            <label class="field wide">
+              <span>Title</span>
+              <input id="titleInput" type="text" value="Planning Burger Folie">
+            </label>
+            <label class="field">
+              <span>Week from</span>
+              <input id="weekStartInput" type="date">
+            </label>
+            <label class="field">
+              <span>Week until</span>
+              <input id="weekEndInput" type="date">
+            </label>
+          </div>
+
+          <form id="shiftForm" class="shift-form">
+            <div class="section-title compact">
+              <h2>Shift</h2>
+            </div>
+            <div class="field-grid">
+              <label class="field wide">
+                <span>Person</span>
+                <select id="personSelect" required></select>
+              </label>
+              <label class="field">
+                <span>Date</span>
+                <input id="dateInput" type="date" required>
+              </label>
+              <label class="field">
+                <span>Time</span>
+                <span class="segment" role="radiogroup" aria-label="Time mode">
+                  <input type="radio" name="timeMode" id="regularTimeMode" value="regular" checked>
+                  <label for="regularTimeMode">Regular</label>
+                  <input type="radio" name="timeMode" id="customTimeMode" value="custom">
+                  <label for="customTimeMode">Custom</label>
+                </span>
+              </label>
+              <label class="field" id="regularStartField">
+                <span>Regular start</span>
+                <span id="regularStartButtons" class="time-button-bar"></span>
+              </label>
+              <label class="field is-hidden" id="customStartField">
+                <span>Custom start</span>
+                <input id="startInput" type="time" required>
+              </label>
+              <label class="field">
+                <span>End</span>
+                <input id="endInput" type="time">
+              </label>
+            </div>
+            <div class="button-row">
+              <button type="submit" class="button primary">
+                Add shift
+              </button>
+              <button type="button" class="button ghost" id="resetFormButton">Reset</button>
+              <button type="button" class="button danger" id="clearShiftsButton">Clear shifts</button>
+            </div>
+          </form>
+        </section>
+
+        <section class="planning-panel" aria-label="Planning preview">
       <div class="planning-head">
         <div>
           <p class="eyebrow">Preview</p>
@@ -137,20 +181,20 @@
         </div>
       </div>
 
-      <section class="calendar-panel" aria-label="Calendar planning">
+      <section class="calendar-panel" id="calendarSection" aria-label="Calendar planning">
         <div class="calendar-toolbar">
-          <button type="button" class="icon-button" id="prevMonthButton" aria-label="Previous month">&lt;</button>
+          <button type="button" class="icon-button" id="prevMonthButton" aria-label="Previous month">‹</button>
           <h2 id="calendarMonthLabel">Month</h2>
-          <button type="button" class="icon-button" id="nextMonthButton" aria-label="Next month">&gt;</button>
+          <button type="button" class="icon-button" id="nextMonthButton" aria-label="Next month">›</button>
         </div>
         <div class="calendar-weekdays" aria-hidden="true">
-          <span>Ma</span>
-          <span>Di</span>
-          <span>Wo</span>
-          <span>Do</span>
-          <span>Vr</span>
-          <span>Za</span>
-          <span>Zo</span>
+          <span>Mon</span>
+          <span>Tue</span>
+          <span>Wed</span>
+          <span>Thu</span>
+          <span>Fri</span>
+          <span>Sat</span>
+          <span>Sun</span>
         </div>
         <div id="calendarGrid" class="calendar-grid"></div>
         <div class="calendar-selected">
@@ -159,7 +203,7 @@
         </div>
       </section>
 
-      <div class="table-shell">
+      <div class="table-shell" id="shiftListSection">
         <table>
           <thead>
             <tr>
@@ -173,6 +217,8 @@
           <tbody id="shiftTable"></tbody>
         </table>
       </div>
+        </section>
+      </div>
     </section>
   </main>
 
@@ -181,26 +227,67 @@
       <div class="share-head">
         <div>
           <p class="eyebrow">WhatsApp package</p>
-          <h2 id="shareTitle">Klaar om te versturen</h2>
+          <h2 id="shareTitle">Ready to send</h2>
         </div>
-        <button type="button" class="icon-button" id="closeShareButton" aria-label="Close share window">x</button>
+        <button type="button" class="icon-button" id="closeShareButton" aria-label="Close share window">×</button>
       </div>
 
       <textarea id="whatsappMessage" class="share-message" readonly></textarea>
 
       <div class="share-downloads">
-        <button type="button" class="button primary" id="downloadAllShareButton">Download alles</button>
-        <a class="button primary" id="sharePdfLink" href="#" download>PDF</a>
-        <a class="button ghost" id="shareAppleLink" href="#" download>Apple .ics</a>
-        <a class="button ghost" id="shareGoogleLink" href="#" download>Google Calendar</a>
+        <button type="button" class="button whatsapp action-button" id="nativeShareButton" hidden>
+          <span class="brand-icon whatsapp-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3.5a8.3 8.3 0 0 0-7.1 12.6L4 20.5l4.5-1.1A8.3 8.3 0 1 0 12 3.5z"></path>
+              <path d="M9.2 8.1c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.7c.1.3 0 .5-.2.7l-.4.5c.6 1.1 1.5 2 2.7 2.7l.5-.4c.2-.2.4-.3.7-.2l1.7.8c.3.1.4.3.4.6v.4c0 .3 0 .5-.4.7-.5.3-1.1.5-1.8.5-2.5 0-6.6-3.6-6.6-6.5 0-.6.2-1.2.5-1.7z"></path>
+            </svg>
+          </span>
+          <span class="button-text">Share on phone</span>
+        </button>
+        <button type="button" class="button primary action-button" id="downloadAllShareButton">
+          <span class="button-icon icon-save" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 4v10"></path>
+              <path d="M8 10l4 4 4-4"></path>
+              <path d="M5 20h14"></path>
+            </svg>
+          </span>
+          <span class="button-text">Download all</span>
+        </button>
+        <a class="button primary action-button" id="sharePdfLink" href="#" download>
+          <span class="button-icon icon-pdf" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M7 3h7l4 4v14H7z"></path>
+              <path d="M14 3v5h4"></path>
+              <path d="M9 16h6"></path>
+            </svg>
+          </span>
+          <span class="button-text">PDF</span>
+        </a>
+        <a class="button ghost action-button" id="shareAppleLink" href="#" download>
+          <span class="brand-icon apple-mark" aria-hidden="true"></span>
+          <span class="button-text">Apple .ics</span>
+        </a>
+        <a class="button ghost action-button" id="shareGoogleLink" href="#" download>
+          <span class="brand-icon google-mark" aria-hidden="true">G</span>
+          <span class="button-text">Google Calendar</span>
+        </a>
       </div>
 
       <div class="share-actions">
-        <button type="button" class="button ghost" id="copyWhatsappButton">Kopieer bericht</button>
-        <a class="button whatsapp" id="openWhatsappLink" href="#" target="_blank" rel="noopener">Open WhatsApp</a>
+        <button type="button" class="button ghost" id="copyWhatsappButton">Copy message</button>
+        <a class="button whatsapp action-button" id="openWhatsappLink" href="#" target="_blank" rel="noopener">
+          <span class="brand-icon whatsapp-mark" aria-hidden="true">
+            <svg viewBox="0 0 24 24" focusable="false">
+              <path d="M12 3.5a8.3 8.3 0 0 0-7.1 12.6L4 20.5l4.5-1.1A8.3 8.3 0 1 0 12 3.5z"></path>
+              <path d="M9.2 8.1c.2-.4.4-.4.7-.4h.5c.2 0 .4.1.5.4l.7 1.7c.1.3 0 .5-.2.7l-.4.5c.6 1.1 1.5 2 2.7 2.7l.5-.4c.2-.2.4-.3.7-.2l1.7.8c.3.1.4.3.4.6v.4c0 .3 0 .5-.4.7-.5.3-1.1.5-1.8.5-2.5 0-6.6-3.6-6.6-6.5 0-.6.2-1.2.5-1.7z"></path>
+            </svg>
+          </span>
+          <span class="button-text">Open WhatsApp</span>
+        </a>
       </div>
 
-      <p class="share-note">De bestanden worden automatisch gedownload. Stuur de PDF mee in WhatsApp. Google-gebruikers kunnen de Agenda-links in het bericht openen.</p>
+      <p class="share-note">On iPhone, use Share on phone and choose WhatsApp. The message stays in Dutch; PDF and calendar files are included when the phone supports file sharing.</p>
     </div>
   </div>
 

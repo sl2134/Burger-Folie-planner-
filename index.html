@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="nl">
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -44,7 +44,7 @@
       <div class="brand-lockup">
         <img src="./assets/burger-folie-logo.png" alt="Burger Folie" class="brand-logo">
         <div>
-          <h1>Burger Folie Timeplanning</h1>
+          <h1>Burger Folie Planner</h1>
           <span id="activePageLabel" class="active-page-label">Planner</span>
         </div>
       </div>
@@ -61,11 +61,11 @@
         </span>
         <span class="button-text">Export PDF</span>
       </button>
-      <button type="button" class="button ghost action-button" id="appleCalendarButton">
+      <button type="button" class="button ghost action-button apple-action" id="appleCalendarButton">
         <span class="brand-icon apple-mark" aria-hidden="true"></span>
         <span class="button-text">Apple Calendar</span>
       </button>
-      <button type="button" class="button ghost action-button" id="googleCalendarButton">
+      <button type="button" class="button ghost action-button google-action" id="googleCalendarButton">
         <span class="brand-icon google-mark" aria-hidden="true">G</span>
         <span class="button-text">Google Calendar</span>
       </button>
@@ -90,8 +90,14 @@
         <span>Timeplanning</span>
       </div>
     </div>
-    <button type="button" class="menu-link is-active" data-page="planner">Planner</button>
-    <button type="button" class="menu-link" data-page="people">People</button>
+    <button type="button" class="menu-link is-active" data-page="planner">
+      <span class="menu-link-icon" aria-hidden="true">P</span>
+      <span>Planner</span>
+    </button>
+    <button type="button" class="menu-link" data-page="people">
+      <span class="menu-link-icon" aria-hidden="true">T</span>
+      <span>People</span>
+    </button>
   </nav>
 
   <main>
@@ -284,11 +290,11 @@
           </span>
           <span class="button-text">PDF</span>
         </a>
-        <a class="button ghost action-button" id="shareAppleLink" href="#" download>
+        <a class="button ghost action-button apple-action" id="shareAppleLink" href="#" download>
           <span class="brand-icon apple-mark" aria-hidden="true"></span>
           <span class="button-text">Apple .ics</span>
         </a>
-        <a class="button ghost action-button" id="shareGoogleLink" href="#" download>
+        <a class="button ghost action-button google-action" id="shareGoogleLink" href="#" download>
           <span class="brand-icon google-mark" aria-hidden="true">G</span>
           <span class="button-text">Google Calendar</span>
         </a>

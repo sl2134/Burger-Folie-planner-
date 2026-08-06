@@ -119,6 +119,7 @@ function startApp() {
   }
 
   bindEvents();
+  installInteractionEffects();
   updateRegularStartOptions();
   updateTimeModeControls();
   render();
@@ -442,6 +443,23 @@ function bindEvents() {
 
     render();
     saveState();
+  });
+}
+
+function installInteractionEffects() {
+  document.addEventListener("pointerdown", event => {
+    const target = event.target.closest(".button, .icon-button, .calendar-day, .calendar-person-button, .time-option-button, .person-time-button, .menu-link");
+    if (!target || target.matches(":disabled")) {
+      return;
+    }
+
+    const rect = target.getBoundingClientRect();
+    const ripple = document.createElement("span");
+    ripple.className = "tap-ripple";
+    ripple.style.left = `${event.clientX - rect.left}px`;
+    ripple.style.top = `${event.clientY - rect.top}px`;
+    target.appendChild(ripple);
+    ripple.addEventListener("animationend", () => ripple.remove(), { once: true });
   });
 }
 

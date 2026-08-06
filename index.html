@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="nl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111111">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="BF Planner">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="format-detection" content="telephone=no">
+  <title>Burger Folie Timeplanning</title>
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
+  <link rel="stylesheet" href="./app.css">
+</head>
+<body>
+  <header class="app-header">
+    <div class="brand-lockup">
+      <img src="./assets/burger-folie-logo.png" alt="Burger Folie" class="brand-logo">
+      <div>
+        <p class="eyebrow">Offline planning</p>
+        <h1>Burger Folie Timeplanning</h1>
+      </div>
+    </div>
+    <div class="header-actions">
+      <button type="button" class="button ghost" id="saveButton">
+        Save
+      </button>
+      <button type="button" class="button primary" id="pdfButton">
+        Export PDF
+      </button>
+      <button type="button" class="button ghost" id="appleCalendarButton">
+        Apple Calendar
+      </button>
+      <button type="button" class="button ghost" id="googleCalendarButton">
+        Google Calendar
+      </button>
+      <button type="button" class="button whatsapp" id="whatsappButton">
+        Share WhatsApp
+      </button>
+    </div>
+  </header>
+
+  <main class="planner-layout">
+    <section class="tool-panel" aria-label="Planning editor">
+      <div class="section-title">
+        <h2>Document</h2>
+        <span id="saveState">Ready</span>
+      </div>
+
+      <div class="field-grid">
+        <label class="field wide">
+          <span>Title</span>
+          <input id="titleInput" type="text" value="Planning Burger Folie">
+        </label>
+        <label class="field">
+          <span>Week from</span>
+          <input id="weekStartInput" type="date">
+        </label>
+        <label class="field">
+          <span>Week until</span>
+          <input id="weekEndInput" type="date">
+        </label>
+      </div>
+
+      <form id="personForm" class="people-form">
+        <div class="section-title compact">
+          <h2>People</h2>
+        </div>
+        <div class="inline-form">
+          <label class="field grow">
+            <span>Name</span>
+            <input id="personInput" type="text" autocomplete="off" placeholder="Floor, Ava, Seth">
+          </label>
+          <button type="submit" class="button primary">
+            Add
+          </button>
+        </div>
+        <div id="peopleList" class="people-list" aria-label="People list"></div>
+      </form>
+
+      <form id="shiftForm" class="shift-form">
+        <div class="section-title compact">
+          <h2>Shift</h2>
+        </div>
+        <div class="field-grid">
+          <label class="field wide">
+            <span>Person</span>
+            <select id="personSelect" required></select>
+          </label>
+          <label class="field">
+            <span>Date</span>
+            <input id="dateInput" type="date" required>
+          </label>
+          <label class="field">
+            <span>Time</span>
+            <span class="segment" role="radiogroup" aria-label="Time mode">
+              <input type="radio" name="timeMode" id="regularTimeMode" value="regular" checked>
+              <label for="regularTimeMode">Regular</label>
+              <input type="radio" name="timeMode" id="customTimeMode" value="custom">
+              <label for="customTimeMode">Custom</label>
+            </span>
+          </label>
+          <label class="field" id="regularStartField">
+            <span>Regular start</span>
+            <span id="regularStartButtons" class="time-button-bar"></span>
+          </label>
+          <label class="field is-hidden" id="customStartField">
+            <span>Custom start</span>
+            <input id="startInput" type="time" required>
+          </label>
+          <label class="field">
+            <span>End</span>
+            <input id="endInput" type="time">
+          </label>
+        </div>
+        <div class="button-row">
+          <button type="submit" class="button primary">
+            Add shift
+          </button>
+          <button type="button" class="button ghost" id="resetFormButton">Reset</button>
+          <button type="button" class="button danger" id="clearShiftsButton">Clear shifts</button>
+        </div>
+      </form>
+    </section>
+
+    <section class="planning-panel" aria-label="Planning preview">
+      <div class="planning-head">
+        <div>
+          <p class="eyebrow">Preview</p>
+          <h2 id="previewTitle">Planning Burger Folie</h2>
+        </div>
+        <div class="metrics">
+          <span id="peopleCount">0 people</span>
+          <span id="shiftCount">0 shifts</span>
+          <span id="dateRange">No dates</span>
+        </div>
+      </div>
+
+      <section class="calendar-panel" aria-label="Calendar planning">
+        <div class="calendar-toolbar">
+          <button type="button" class="icon-button" id="prevMonthButton" aria-label="Previous month">&lt;</button>
+          <h2 id="calendarMonthLabel">Month</h2>
+          <button type="button" class="icon-button" id="nextMonthButton" aria-label="Next month">&gt;</button>
+        </div>
+        <div class="calendar-weekdays" aria-hidden="true">
+          <span>Ma</span>
+          <span>Di</span>
+          <span>Wo</span>
+          <span>Do</span>
+          <span>Vr</span>
+          <span>Za</span>
+          <span>Zo</span>
+        </div>
+        <div id="calendarGrid" class="calendar-grid"></div>
+        <div class="calendar-selected">
+          <span id="selectedDateLabel">No date selected</span>
+          <div id="calendarPeople" class="calendar-people" aria-label="People for selected date"></div>
+        </div>
+      </section>
+
+      <div class="table-shell">
+        <table>
+          <thead>
+            <tr>
+              <th>Date</th>
+              <th>Person</th>
+              <th>Start</th>
+              <th>End</th>
+              <th class="actions-column">Actions</th>
+            </tr>
+          </thead>
+          <tbody id="shiftTable"></tbody>
+        </table>
+      </div>
+    </section>
+  </main>
+
+  <div class="share-overlay is-hidden" id="shareOverlay" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
+    <div class="share-card">
+      <div class="share-head">
+        <div>
+          <p class="eyebrow">WhatsApp package</p>
+          <h2 id="shareTitle">Klaar om te versturen</h2>
+        </div>
+        <button type="button" class="icon-button" id="closeShareButton" aria-label="Close share window">x</button>
+      </div>
+
+      <textarea id="whatsappMessage" class="share-message" readonly></textarea>
+
+      <div class="share-downloads">
+        <button type="button" class="button primary" id="downloadAllShareButton">Download alles</button>
+        <a class="button primary" id="sharePdfLink" href="#" download>PDF</a>
+        <a class="button ghost" id="shareAppleLink" href="#" download>Apple .ics</a>
+        <a class="button ghost" id="shareGoogleLink" href="#" download>Google Calendar</a>
+      </div>
+
+      <div class="share-actions">
+        <button type="button" class="button ghost" id="copyWhatsappButton">Kopieer bericht</button>
+        <a class="button whatsapp" id="openWhatsappLink" href="#" target="_blank" rel="noopener">Open WhatsApp</a>
+      </div>
+
+      <p class="share-note">De bestanden worden automatisch gedownload. Stuur de PDF mee in WhatsApp. Google-gebruikers kunnen de Agenda-links in het bericht openen.</p>
+    </div>
+  </div>
+
+  <script src="./app.js" defer></script>
+</body>
+</html>

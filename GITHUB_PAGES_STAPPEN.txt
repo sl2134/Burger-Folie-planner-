@@ -1,0 +1,35 @@
+Burger Folie Timeplanning via GitHub Pages
+
+Doel
+Je zet de app op GitHub zodat iemand alleen een link hoeft te openen.
+Voor iPhone: open de link in Safari en kies "Zet op beginscherm".
+
+Stappen voor degene met GitHub
+1. Ga naar https://github.com/new
+2. Maak een nieuwe repository, bijvoorbeeld:
+   burger-folie-timeplanning
+3. Upload de bestanden uit deze ZIP naar de repository.
+   Belangrijk: index.html moet in de hoofdmap staan.
+4. Ga in GitHub naar:
+   Settings > Pages
+5. Kies:
+   Source: Deploy from a branch
+   Branch: main
+   Folder: /root
+6. Klik Save.
+7. Wacht 1-2 minuten.
+8. GitHub toont een link zoals:
+   https://gebruikersnaam.github.io/burger-folie-timeplanning/
+
+Gebruik op iPhone
+1. Open die link in Safari.
+2. Tik op de Deel-knop.
+3. Kies "Zet op beginscherm".
+4. Open daarna Burger Folie via het icoon.
+
+Gebruik op computer
+Open dezelfde link in Chrome, Safari, Edge of Firefox.
+
+Belangrijk
+De planning wordt lokaal opgeslagen op het toestel/browser van de gebruiker.
+GitHub bewaart dus niet automatisch de ingevulde planning.

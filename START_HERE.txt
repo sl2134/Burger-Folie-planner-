@@ -1,0 +1,29 @@
+Burger Folie Timeplanning
+
+Dit is een gratis lokale app. Er is geen login, geen cloud en geen internet nodig voor de planning zelf.
+
+Mac
+1. Dubbelklik op "Burger Folie Timeplanning.app".
+2. Als macOS blokkeert: rechtermuisklik op de app en kies "Open".
+3. Als dat niet werkt: dubbelklik op "BurgerFolieTimeplanning.command".
+4. Om de lokale server te stoppen: dubbelklik op "StopBurgerFolieTimeplanning.command".
+
+Windows
+Dubbelklik op "BurgerFolieTimeplanning.bat".
+
+Linux
+Dubbelklik of start "BurgerFolieTimeplanning.sh".
+
+iPhone / iPad
+Lees "IOS_INSTALL.txt".
+Gratis lokale optie: dubbelklik op "StartForIPhone.command" op de Mac en open de getoonde link op de iPhone in Safari.
+
+Gebruik
+1. Voeg personen toe.
+2. Kies een datum in de kalender.
+3. Klik op een persoon en kies 17:30 / 18:00 of weekendtijd.
+4. Exporteer PDF of Agenda-bestanden.
+5. Gebruik "Share WhatsApp" om het WhatsApp-bericht en de bestanden klaar te zetten.
+
+Belangrijk
+WhatsApp laat een lokale app geen bestanden automatisch vastmaken. De app downloadt de bestanden en zet het bericht klaar; voeg de PDF eventueel zelf toe in WhatsApp.

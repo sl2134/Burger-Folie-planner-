@@ -1,0 +1,24 @@
+Burger Folie Timeplanning op iPhone
+
+Belangrijk
+Een echte iOS app installeren zonder App Store of Apple Developer account kan niet betrouwbaar. Apple blokkeert dat met signing-regels.
+
+Gratis lokale optie via Mac
+1. Zet de Mac en iPhone op dezelfde wifi.
+2. Dubbelklik op "StartForIPhone.command".
+3. Er verschijnt een lokale link, bijvoorbeeld:
+   http://192.168.1.20:57420/index.html
+4. Open die link op de iPhone in Safari.
+5. Tik op de Deel-knop.
+6. Kies "Zet op beginscherm".
+
+Gebruik
+De app opent dan als een app-icoon op de iPhone.
+
+Beperking
+Bij deze volledig lokale optie moet de Mac-server blijven draaien zolang de iPhone de app gebruikt. Voor echte offline iPhone-installatie moet de app eenmalig via een HTTPS-link worden geopend, bijvoorbeeld via gratis hosting.
+
+Beste gratis iPhone-optie
+Gratis hosten via GitHub Pages, daarna op iPhone:
+Safari > Deel-knop > Zet op beginscherm.
+Daarna kan de app offline werken via de service worker.

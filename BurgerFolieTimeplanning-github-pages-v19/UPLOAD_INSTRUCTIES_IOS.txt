@@ -1,0 +1,38 @@
+Burger Folie Timeplanning uploaden voor iPhone
+
+Deze map/ZIP is voor iemand die de app online zet.
+Er is geen Mac nodig.
+
+Upload deze bestanden naar statische hosting:
+- index.html
+- app.css
+- app.js
+- sw.js
+- manifest.webmanifest
+- assets/
+
+Belangrijk:
+De website moet via HTTPS werken. Anders kan de offline installatie op iPhone minder goed werken.
+
+Geschikte gratis opties:
+- GitHub Pages
+- Netlify
+- Vercel
+- Cloudflare Pages
+
+GitHub Pages kort
+1. Maak een nieuwe GitHub repository.
+2. Upload de bestanden uit deze ZIP.
+3. Ga naar Settings > Pages.
+4. Kies Deploy from a branch.
+5. Kies main en /root.
+6. Gebruik de GitHub Pages link op iPhone in Safari.
+
+Na upload:
+1. Open de URL op de iPhone in Safari.
+2. Tik op de Deel-knop.
+3. Kies "Zet op beginscherm".
+4. Open daarna de app via het nieuwe icoon.
+
+Opmerking:
+De app draait lokaal in de browser van de iPhone zodra hij geladen is. Planninggegevens blijven op die iPhone opgeslagen.

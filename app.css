@@ -1678,24 +1678,26 @@ body {
     overflow-x: visible;
     overflow-y: visible;
     gap: 8px;
-    padding: 12px 2px 3px;
+    padding: 8px 2px 3px;
   }
 
   .calendar-person-wrap {
-    flex: 0 0 auto;
-    display: inline-flex;
+    flex: 0 1 auto;
+    display: grid;
+    gap: 6px;
     position: relative;
   }
 
   .calendar-person-times {
-    position: absolute;
-    left: 50%;
-    bottom: calc(100% + 6px);
-    min-width: 134px;
+    position: static;
+    order: 2;
+    inline-size: 100%;
+    min-width: 0;
+    max-width: 100%;
     opacity: 0;
     pointer-events: none;
-    transform: translate(-50%, 6px);
-    box-shadow: 0 14px 30px rgba(25, 24, 22, 0.22);
+    transform: none;
+    box-shadow: none;
   }
 
   .calendar-person-wrap:hover .calendar-person-times,
@@ -1703,12 +1705,17 @@ body {
   .calendar-person-wrap.is-open .calendar-person-times {
     opacity: 1;
     pointer-events: auto;
-    transform: translate(-50%, 0);
+    transform: none;
   }
 
   .calendar-person-button {
+    order: 1;
     min-height: 38px;
     padding: 0 12px;
+  }
+
+  .person-time-button {
+    min-width: 58px;
   }
 
   .table-shell {

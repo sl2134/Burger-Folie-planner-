@@ -1251,17 +1251,15 @@ function buildWhatsappMessage() {
     });
   });
 
-  const googleLinks = buildGoogleCalendarShareLinks(shifts);
-  if (googleLinks.length) {
-    lines.push("", "Google Agenda links:");
-    googleLinks.forEach(line => lines.push(line));
+  const googleLink = buildGoogleCalendarPlanningLink(shifts);
+  if (googleLink) {
+    lines.push("", "Google Agenda:", googleLink);
   }
 
   return lines.join("\n");
 }
 
-function buildGoogleCalendarShareLinks(rows) {
-  const limit = 10;
+function buildGoogleCalendarPlanningLink(rows) {
   const validRows = [...rows]
     .filter(shift => shift.date && shift.name)
     .sort((left, right) => {
@@ -1272,29 +1270,35 @@ function buildGoogleCalendarShareLinks(rows) {
       return (left.start || "99:99").localeCompare(right.start || "99:99");
     });
 
-  const links = validRows.slice(0, limit).map(shift => {
-    const label = `${formatDateShort(shift.date)} ${shift.name} ${formatHours(shift)}`;
-    return `- ${label}: ${googleCalendarEventLink(shift)}`;
-  });
-
-  if (validRows.length > limit) {
-    links.push(`- Nog ${validRows.length - limit} extra shiften staan niet als aparte link in dit bericht.`);
+  if (!validRows.length) {
+    return "";
   }
 
-  return links;
-}
+  const title = elements.titleInput.value.trim() || "Planning Burger Folie";
+  const firstDate = dateFromIso(validRows[0].date);
+  const lastDate = dateFromIso(validRows[validRows.length - 1].date);
+  lastDate.setDate(lastDate.getDate() + 1);
 
-function googleCalendarEventLink(shift) {
-  const times = calendarTimes(shift);
   const params = new URLSearchParams({
     action: "TEMPLATE",
-    text: `Burger Folie - ${shift.name}`,
-    dates: `${googleLocalDateTime(times.start)}/${googleLocalDateTime(times.end)}`,
+    text: title,
+    dates: `${googleAllDayDate(firstDate)}/${googleAllDayDate(lastDate)}`,
     ctz: "Europe/Brussels",
-    details: calendarDescription(shift),
+    details: googlePlanningDescription(validRows),
     location: "Burger Folie"
   });
   return `https://calendar.google.com/calendar/render?${params.toString()}`;
+}
+
+function googlePlanningDescription(rows) {
+  const lines = ["Planning Burger Folie", ""];
+  groupByDate([...rows]).forEach(group => {
+    lines.push(formatDateLong(group.date));
+    group.items.forEach(shift => {
+      lines.push(`- ${shift.name}: ${formatHours(shift)}`);
+    });
+  });
+  return lines.join("\n");
 }
 
 function buildCalendarFile({ title, shifts: rows }) {
@@ -1383,6 +1387,14 @@ function icsUtcDateTime(date) {
     String(date.getUTCMinutes()).padStart(2, "0"),
     String(date.getUTCSeconds()).padStart(2, "0"),
     "Z"
+  ].join("");
+}
+
+function googleAllDayDate(date) {
+  return [
+    date.getFullYear(),
+    String(date.getMonth() + 1).padStart(2, "0"),
+    String(date.getDate()).padStart(2, "0")
   ].join("");
 }
 

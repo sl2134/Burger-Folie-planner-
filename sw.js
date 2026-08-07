@@ -1,11 +1,12 @@
-const CACHE_NAME = "burger-folie-planner-v40";
+const CACHE_NAME = "burger-folie-planner-v41";
 const ASSETS = [
   "./",
   "./index.html",
   "./app.css",
-  "./launch.css?v=40",
-  "./app.js",
-  "./extras.js",
+  "./launch.css?v=41",
+  "./app.js?v=41",
+  "./extras.js?v=41",
+  "./mobile-fix.js?v=41",
   "./manifest.webmanifest",
   "./assets/burger-folie-logo.png",
   "./assets/apple-touch-icon.png",
@@ -36,11 +37,42 @@ self.addEventListener("fetch", event => {
 
   event.respondWith(
     fetch(event.request)
-      .then(response => {
-        const copy = response.clone();
+      .then(async response => {
+        const nextResponse = await maybeInjectMobileFix(event.request, response);
+        const copy = nextResponse.clone();
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
-        return response;
+        return nextResponse;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => caches.match(event.request).then(response => response && maybeInjectMobileFix(event.request, response)))
   );
 });
+
+async function maybeInjectMobileFix(request, response) {
+  const isHtml = request.mode === "navigate" ||
+    request.destination === "document" ||
+    request.url.endsWith("/") ||
+    request.url.includes("index.html");
+
+  if (!isHtml || !response || response.status >= 400) {
+    return response;
+  }
+
+  const contentType = response.headers.get("content-type") || "";
+  if (contentType && !contentType.includes("text/html")) {
+    return response;
+  }
+
+  const html = await response.clone().text();
+  if (html.includes("mobile-fix.js")) {
+    return response;
+  }
+
+  const fixedHtml = html.replace("</body>", "  <script src=\"./mobile-fix.js?v=41\" defer></script>\n</body>");
+  const headers = new Headers(response.headers);
+  headers.set("content-type", "text/html;charset=utf-8");
+  return new Response(fixedHtml, {
+    status: response.status,
+    statusText: response.statusText,
+    headers
+  });
+}

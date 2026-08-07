@@ -410,7 +410,8 @@
 }
 
 /* Header title cleanup: show the brand once, with the page label below it. */
-.brand-lockup h1 {
+.brand-lockup h1,
+body:not(.is-access-locked) .brand-lockup h1 {
   font-size: 0;
   line-height: 1.05;
 }

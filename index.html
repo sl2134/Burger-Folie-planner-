@@ -15,7 +15,7 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
   <link rel="stylesheet" href="./app.css">
-  <link rel="stylesheet" href="./launch.css?v=34">
+  <link rel="stylesheet" href="./launch.css?v=40">
 </head>
 <body class="is-access-locked">
   <div class="launch-screen" id="launchScreen" aria-hidden="true">
@@ -115,6 +115,10 @@
       <span class="menu-link-icon" aria-hidden="true">T</span>
       <span>People</span>
     </button>
+    <button type="button" class="menu-link" data-transfer-page="transfer">
+      <span class="menu-link-icon" aria-hidden="true">E</span>
+      <span>Export Data</span>
+    </button>
   </nav>
 
   <main>
@@ -141,6 +145,70 @@
           <button type="button" class="button ghost page-jump" data-page-target="planner">Back to planner</button>
         </div>
       </form>
+    </section>
+
+    <section class="page-view transfer-page" id="transferPage" data-page-view="transfer" aria-label="Export data page">
+      <div class="transfer-layout">
+        <section class="page-card transfer-card transfer-card-primary">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Transfer</p>
+              <h2>Export Data</h2>
+            </div>
+            <span id="transferExportStatus" class="transfer-status">Ready</span>
+          </div>
+
+          <div class="transfer-summary-grid" aria-label="Export summary">
+            <span>
+              <strong id="transferPeopleCount">0</strong>
+              <small>People</small>
+            </span>
+            <span>
+              <strong id="transferShiftCount">0</strong>
+              <small>Shifts</small>
+            </span>
+            <span>
+              <strong id="transferDateRange">No dates</strong>
+              <small>Range</small>
+            </span>
+          </div>
+
+          <label class="field">
+            <span>Transfer code</span>
+            <textarea id="transferCode" class="transfer-code" readonly spellcheck="false" autocomplete="off"></textarea>
+          </label>
+
+          <div class="button-row transfer-actions">
+            <button type="button" class="button ghost" id="refreshTransferButton">Refresh code</button>
+            <button type="button" class="button primary" id="copyTransferButton">Copy code</button>
+            <button type="button" class="button ghost" id="mailTransferButton">Send by mail</button>
+          </div>
+        </section>
+
+        <section class="page-card transfer-card">
+          <div class="section-title">
+            <div>
+              <p class="eyebrow">Import</p>
+              <h2>Import Data</h2>
+            </div>
+            <span id="transferImportStatus" class="transfer-status">Waiting</span>
+          </div>
+
+          <label class="field">
+            <span>Paste transfer code</span>
+            <textarea id="importTransferCode" class="transfer-code import-code" spellcheck="false" autocomplete="off" placeholder="Paste the code from your other device"></textarea>
+          </label>
+
+          <div class="segment transfer-mode" role="radiogroup" aria-label="Import mode">
+            <input type="radio" name="transferMode" id="transferReplaceMode" value="replace" checked>
+            <label for="transferReplaceMode">Replace</label>
+            <input type="radio" name="transferMode" id="transferMergeMode" value="merge">
+            <label for="transferMergeMode">Merge</label>
+          </div>
+
+          <button type="button" class="button primary transfer-import-button" id="importTransferButton">Import planning</button>
+        </section>
+      </div>
     </section>
 
     <section class="page-view is-active" id="plannerPage" data-page-view="planner" aria-label="Planner page">
@@ -265,6 +333,92 @@
     </section>
   </main>
 
+  <div class="mobile-day-overlay is-hidden" id="mobileDayOverlay" role="dialog" aria-modal="true" aria-labelledby="mobileDayTitle">
+    <div class="mobile-day-sheet">
+      <div class="mobile-day-grip" aria-hidden="true"></div>
+      <div class="mobile-day-head">
+        <div>
+          <p class="eyebrow">Day</p>
+          <h2 id="mobileDayTitle">Selected day</h2>
+        </div>
+        <button type="button" class="icon-button" id="closeMobileDayButton" aria-label="Close day planner">×</button>
+      </div>
+
+      <section class="mobile-day-section">
+        <div class="mobile-day-section-head">
+          <span>Shifts</span>
+          <strong id="mobileDayShiftCount">0</strong>
+        </div>
+        <div id="mobileDayShiftList" class="mobile-day-shift-list"></div>
+      </section>
+
+      <section class="mobile-day-section">
+        <div class="mobile-day-section-head">
+          <span>Add person</span>
+        </div>
+        <div id="mobileDayPeople" class="mobile-day-people"></div>
+      </section>
+
+      <section class="mobile-day-section mobile-custom-section">
+        <div class="mobile-day-section-head">
+          <span>Custom time</span>
+        </div>
+        <div class="mobile-custom-grid">
+          <label class="field">
+            <span>Person</span>
+            <select id="mobileCustomPerson"></select>
+          </label>
+          <label class="field">
+            <span>Start</span>
+            <input id="mobileCustomStart" type="time" value="18:00">
+          </label>
+          <label class="field">
+            <span>End</span>
+            <input id="mobileCustomEnd" type="time" value="22:00">
+          </label>
+          <button type="button" class="button primary" id="mobileCustomAddButton">Add</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
+  <div class="export-range-overlay is-hidden" id="exportRangeOverlay" role="dialog" aria-modal="true" aria-labelledby="exportRangeTitle">
+    <div class="export-range-card">
+      <div class="share-head">
+        <div>
+          <p class="eyebrow">Export</p>
+          <h2 id="exportRangeTitle">Choose dates</h2>
+        </div>
+        <button type="button" class="icon-button" id="closeExportRangeButton" aria-label="Close export window">×</button>
+      </div>
+
+      <div class="export-range-options" aria-label="Quick date choices">
+        <button type="button" class="range-chip is-selected" data-range-preset="all">All planned dates</button>
+        <button type="button" class="range-chip" data-range-preset="week">Selected week</button>
+        <button type="button" class="range-chip" data-range-preset="month">Visible month</button>
+        <button type="button" class="range-chip" data-range-preset="custom">Custom</button>
+      </div>
+
+      <div class="field-grid export-range-fields">
+        <label class="field">
+          <span>From</span>
+          <input id="exportStartInput" type="date">
+        </label>
+        <label class="field">
+          <span>Until</span>
+          <input id="exportEndInput" type="date">
+        </label>
+      </div>
+
+      <div class="export-range-preview">
+        <span id="exportRangeCount">0 shifts</span>
+        <strong id="exportRangeLabel">No dates</strong>
+      </div>
+
+      <button type="button" class="button primary export-range-confirm" id="confirmExportRangeButton">Continue export</button>
+    </div>
+  </div>
+
   <div class="share-overlay is-hidden" id="shareOverlay" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
     <div class="share-card">
       <div class="share-head">
@@ -335,5 +489,6 @@
   </div>
 
   <script src="./app.js" defer></script>
+  <script src="./extras.js" defer></script>
 </body>
 </html>

@@ -1,29 +1,18 @@
 (() => {
   const STORAGE_KEY = "burger-folie-planner-v2";
   const TRANSFER_PREFIX = "BFPLAN1.";
-  const DEFAULT_END_TIME = "22:00";
-  const REGULAR_STARTS = {
-    weekday: ["17:30", "18:00"],
-    weekend: ["17:00", "17:30"]
-  };
   const WEEKDAYS_NL = ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrijdag", "zaterdag"];
-  const mobileMedia = window.matchMedia("(max-width: 760px)");
 
   const transfer = {};
   const exportRange = {
     action: "",
     preset: "all"
   };
-  const mobileDay = {
-    dateIso: "",
-    openPerson: ""
-  };
 
   document.addEventListener("DOMContentLoaded", () => {
     bindExportRangeSelector();
     bindTransferPage();
     bindTransferTools();
-    bindMobileDaySheet();
     renderTransferCode();
 
     if (location.hash === "#transfer") {
@@ -635,250 +624,6 @@
     element.classList.toggle("is-error", isError);
   }
 
-  function bindMobileDaySheet() {
-    Object.assign(mobileDay, {
-      overlay: document.getElementById("mobileDayOverlay"),
-      title: document.getElementById("mobileDayTitle"),
-      count: document.getElementById("mobileDayShiftCount"),
-      list: document.getElementById("mobileDayShiftList"),
-      people: document.getElementById("mobileDayPeople"),
-      closeButton: document.getElementById("closeMobileDayButton"),
-      customPerson: document.getElementById("mobileCustomPerson"),
-      customStart: document.getElementById("mobileCustomStart"),
-      customEnd: document.getElementById("mobileCustomEnd"),
-      customAddButton: document.getElementById("mobileCustomAddButton")
-    });
-
-    document.getElementById("calendarGrid")?.addEventListener("click", event => {
-      const button = event.target.closest("button[data-date]");
-      if (!button || !mobileMedia.matches) {
-        return;
-      }
-      window.setTimeout(() => openMobileDay(button.dataset.date), 30);
-    });
-
-    mobileDay.closeButton?.addEventListener("click", closeMobileDay);
-    mobileDay.overlay?.addEventListener("click", event => {
-      if (event.target === mobileDay.overlay) {
-        closeMobileDay();
-      }
-    });
-
-    window.addEventListener("keydown", event => {
-      if (event.key === "Escape") {
-        closeMobileDay();
-      }
-    });
-
-    mobileDay.people?.addEventListener("click", event => {
-      const timeButton = event.target.closest("button[data-mobile-person][data-mobile-time]");
-      if (timeButton) {
-        addMobileRegularShift(timeButton.dataset.mobilePerson, timeButton.dataset.mobileTime);
-        return;
-      }
-
-      const personButton = event.target.closest("button[data-mobile-person]");
-      if (!personButton) {
-        return;
-      }
-      mobileDay.openPerson = mobileDay.openPerson === personButton.dataset.mobilePerson
-        ? ""
-        : personButton.dataset.mobilePerson;
-      renderMobileDay();
-    });
-
-    mobileDay.customAddButton?.addEventListener("click", addMobileCustomShift);
-  }
-
-  function openMobileDay(dateIso) {
-    mobileDay.dateIso = dateIso;
-    mobileDay.openPerson = "";
-    renderMobileDay();
-    mobileDay.overlay?.classList.remove("is-hidden");
-    document.body.classList.add("is-mobile-day-open");
-    mobileDay.overlay?.querySelector(".mobile-day-sheet")?.scrollTo({ top: 0 });
-  }
-
-  function closeMobileDay() {
-    mobileDay.overlay?.classList.add("is-hidden");
-    document.body.classList.remove("is-mobile-day-open");
-  }
-
-  function renderMobileDay() {
-    if (!mobileDay.overlay || !mobileDay.dateIso) {
-      return;
-    }
-
-    const state = normalizePlannerState(readStoredState());
-    const dayShifts = state.shifts
-      .filter(shift => shift.date === mobileDay.dateIso)
-      .sort((left, right) => (left.start || "99:99").localeCompare(right.start || "99:99") || left.name.localeCompare(right.name));
-
-    if (mobileDay.title) {
-      mobileDay.title.textContent = formatDateLongUi(mobileDay.dateIso);
-    }
-    if (mobileDay.count) {
-      mobileDay.count.textContent = String(dayShifts.length);
-    }
-
-    renderMobileDayShifts(dayShifts);
-    renderMobileDayPeople(state.people);
-    renderMobileCustomPeople(state.people);
-  }
-
-  function renderMobileDayShifts(dayShifts) {
-    if (!mobileDay.list) {
-      return;
-    }
-
-    if (!dayShifts.length) {
-      mobileDay.list.innerHTML = `<div class="mobile-empty">No shifts on this day</div>`;
-      return;
-    }
-
-    mobileDay.list.innerHTML = dayShifts.map((shift, index) => `
-      <div class="mobile-shift-card" style="--item-index: ${index}">
-        <strong>${escapeHtml(shift.name || "-")}</strong>
-        <span>${escapeHtml(formatHours(shift))}</span>
-      </div>
-    `).join("");
-  }
-
-  function renderMobileDayPeople(people) {
-    if (!mobileDay.people) {
-      return;
-    }
-
-    if (!people.length) {
-      mobileDay.people.innerHTML = `<div class="mobile-empty">Add people first</div>`;
-      return;
-    }
-
-    const starts = regularStartsForDate(mobileDay.dateIso);
-    mobileDay.people.innerHTML = people.map((person, index) => {
-      const open = person === mobileDay.openPerson;
-      return `
-        <div class="mobile-person-wrap${open ? " is-open" : ""}" style="--item-index: ${index}">
-          <button type="button" class="mobile-person-button" data-mobile-person="${escapeAttribute(person)}">${escapeHtml(person)}</button>
-          <div class="mobile-person-times">
-            ${starts.map(time => `
-              <button type="button" class="person-time-button" data-mobile-person="${escapeAttribute(person)}" data-mobile-time="${escapeAttribute(time)}">${escapeHtml(time)}</button>
-            `).join("")}
-          </div>
-        </div>
-      `;
-    }).join("");
-  }
-
-  function renderMobileCustomPeople(people) {
-    if (!mobileDay.customPerson) {
-      return;
-    }
-
-    const selected = mobileDay.customPerson.value;
-    mobileDay.customPerson.innerHTML = people.length
-      ? people.map(person => `<option value="${escapeAttribute(person)}">${escapeHtml(person)}</option>`).join("")
-      : `<option value="">Add people first</option>`;
-
-    if (people.includes(selected)) {
-      mobileDay.customPerson.value = selected;
-    }
-
-    const starts = regularStartsForDate(mobileDay.dateIso);
-    if (mobileDay.customStart && (!mobileDay.customStart.value || starts.includes(mobileDay.customStart.value))) {
-      mobileDay.customStart.value = starts[0];
-    }
-    if (mobileDay.customEnd && !mobileDay.customEnd.value) {
-      mobileDay.customEnd.value = DEFAULT_END_TIME;
-    }
-  }
-
-  function addMobileRegularShift(person, time) {
-    if (!person || !time) {
-      return;
-    }
-
-    try {
-      if (typeof window.selectDate === "function") {
-        window.selectDate(mobileDay.dateIso, { syncWeek: true });
-      }
-      if (typeof window.addQuickShift === "function") {
-        window.addQuickShift(person, time);
-      } else {
-        addShiftToStoredState({ name: person, date: mobileDay.dateIso, start: time, end: DEFAULT_END_TIME });
-      }
-    } catch {
-      addShiftToStoredState({ name: person, date: mobileDay.dateIso, start: time, end: DEFAULT_END_TIME });
-    }
-
-    window.setTimeout(() => {
-      renderMobileDay();
-      renderTransferCode();
-    }, 70);
-  }
-
-  function addMobileCustomShift() {
-    const person = mobileDay.customPerson?.value;
-    const start = mobileDay.customStart?.value;
-    const end = mobileDay.customEnd?.value || DEFAULT_END_TIME;
-
-    if (!person || !start) {
-      return;
-    }
-
-    try {
-      if (typeof window.selectDate === "function") {
-        window.selectDate(mobileDay.dateIso, { syncWeek: true });
-      }
-      const personSelect = document.getElementById("personSelect");
-      const startInput = document.getElementById("startInput");
-      const endInput = document.getElementById("endInput");
-      const customMode = document.getElementById("customTimeMode");
-      if (customMode) {
-        customMode.checked = true;
-        customMode.dispatchEvent(new Event("change", { bubbles: true }));
-      }
-      if (personSelect) {
-        personSelect.value = person;
-      }
-      if (startInput) {
-        startInput.value = start;
-      }
-      if (endInput) {
-        endInput.value = end;
-      }
-      if (typeof window.addShiftFromForm === "function") {
-        window.addShiftFromForm();
-      } else {
-        addShiftToStoredState({ name: person, date: mobileDay.dateIso, start, end });
-      }
-    } catch {
-      addShiftToStoredState({ name: person, date: mobileDay.dateIso, start, end });
-    }
-
-    window.setTimeout(() => {
-      renderMobileDay();
-      renderTransferCode();
-    }, 70);
-  }
-
-  function addShiftToStoredState(shift) {
-    const state = normalizePlannerState(readStoredState());
-    if (!state.people.includes(shift.name)) {
-      state.people.push(shift.name);
-      state.people.sort((left, right) => left.localeCompare(right));
-    }
-    const duplicate = state.shifts.some(item =>
-      item.date === shift.date &&
-      item.name === shift.name &&
-      item.start === shift.start
-    );
-    if (!duplicate) {
-      state.shifts.push({ id: createId(), ...shift });
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
-    }
-  }
-
   function normalizePlannerState(raw) {
     const source = raw && typeof raw === "object" ? raw : {};
     const people = uniqueNames(source.people);
@@ -989,15 +734,6 @@
       map.get(key).push(row);
     });
     return [...map.entries()].map(([date, items]) => ({ date, items }));
-  }
-
-  function regularStartsForDate(dateIso) {
-    return isWeekend(dateIso) ? REGULAR_STARTS.weekend : REGULAR_STARTS.weekday;
-  }
-
-  function isWeekend(dateIso) {
-    const day = dateFromIso(dateIso).getDay();
-    return day === 0 || day === 6;
   }
 
   function formatDateShort(iso) {

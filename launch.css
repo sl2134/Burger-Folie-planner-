@@ -464,12 +464,99 @@ body:not(.is-access-locked) .brand-lockup h1 {
   }
 }
 
-/* Calendar date tiles: keep day tiles clean and show the selected-day people below. */
-.calendar-day {
-  grid-template-rows: auto auto !important;
+/* Calendar date tiles: keep day tiles clean, show workers only on hover. */
+.planning-panel,
+.calendar-panel {
+  overflow: visible;
 }
 
+.planning-head {
+  border-radius: inherit;
+  border-bottom-right-radius: 0;
+  border-bottom-left-radius: 0;
+}
+
+.calendar-day {
+  grid-template-rows: auto auto !important;
+  overflow: visible !important;
+}
+
+.calendar-shift-tooltip,
 .calendar-shift-list {
+  position: absolute;
+  left: 50%;
+  bottom: calc(100% + 10px);
+  z-index: 24;
+  width: max-content;
+  min-width: 150px;
+  max-width: min(270px, calc(100vw - 40px));
+  display: grid;
+  gap: 6px;
+  padding: 9px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 14px;
+  color: #ffffff;
+  background:
+    linear-gradient(145deg, rgba(19, 16, 14, 0.98), rgba(36, 30, 26, 0.96));
+  box-shadow: 0 18px 42px rgba(19, 16, 14, 0.26);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate3d(-50%, 8px, 0) scale(0.98);
+  transform-origin: center bottom;
+  transition:
+    opacity 160ms var(--ease),
+    transform 190ms var(--ease);
+}
+
+.calendar-shift-tooltip::after,
+.calendar-shift-list::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  bottom: -6px;
+  width: 12px;
+  height: 12px;
+  background: rgba(30, 25, 22, 0.98);
+  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transform: translateX(-50%) rotate(45deg);
+}
+
+.calendar-day.has-shifts:hover .calendar-shift-tooltip,
+.calendar-day.has-shifts:focus-visible .calendar-shift-tooltip,
+.calendar-day:has(.calendar-shift-pill):hover .calendar-shift-list,
+.calendar-day:has(.calendar-shift-pill):focus-visible .calendar-shift-list {
+  opacity: 1;
+  transform: translate3d(-50%, 0, 0) scale(1);
+}
+
+.calendar-shift-pill {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 28px;
+  padding: 5px 8px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.07);
+  color: #ffffff;
+  font-size: 0.79rem;
+  font-weight: 900;
+  line-height: 1.1;
+  white-space: nowrap;
+}
+
+.calendar-shift-pill small {
+  color: var(--gold);
+  font-size: 0.74rem;
+  font-weight: 950;
+}
+
+.calendar-shift-tooltip:empty,
+.calendar-shift-list:empty {
   display: none !important;
 }
 
@@ -490,6 +577,13 @@ body:not(.is-access-locked) .brand-lockup h1 {
   color: #ffffff;
   border-color: rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.14);
+}
+
+@media (max-width: 760px) {
+  .calendar-shift-tooltip,
+  .calendar-shift-list {
+    display: none !important;
+  }
 }
 
 /* v42: local transfer and date-filtered exports. */

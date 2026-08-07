@@ -15,8 +15,30 @@
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
   <link rel="stylesheet" href="./app.css">
+  <link rel="stylesheet" href="./launch.css">
 </head>
 <body class="is-access-locked">
+  <div class="launch-screen" id="launchScreen" aria-hidden="true">
+    <div class="launch-grid">
+      <span>[PDF]</span>
+      <span>[ICS]</span>
+      <span>[WA]</span>
+    </div>
+    <div class="launch-logo-card">
+      <img src="./assets/burger-folie-logo.png" alt="">
+    </div>
+    <div class="launch-title">
+      <span>Burger</span>
+      <span>Folie</span>
+      <small>Timeplanning</small>
+    </div>
+    <div class="launch-loader">
+      <span></span>
+      <span></span>
+      <span></span>
+    </div>
+  </div>
+
   <div class="access-gate" id="accessGate" role="dialog" aria-modal="true" aria-labelledby="accessTitle">
     <div class="access-card">
       <img src="./assets/burger-folie-logo.png" alt="Burger Folie" class="access-logo">

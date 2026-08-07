@@ -1,0 +1,410 @@
+/* Launch and desktop navigation overrides. Kept separate so GitHub Pages can refresh this layer quickly. */
+.launch-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: grid;
+  grid-template-columns: minmax(220px, 0.62fr) minmax(0, 1.38fr);
+  align-items: end;
+  gap: clamp(16px, 3vw, 42px);
+  padding: clamp(22px, 5vw, 72px);
+  overflow: hidden;
+  color: #fffaf2;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.07) 0 1px, transparent 1px 92px),
+    linear-gradient(145deg, #060606 0%, #11100f 48%, #2a1712 100%);
+  animation: launchAutoExit 2250ms var(--ease) forwards;
+}
+
+.launch-screen::before {
+  content: "BURGER\A FOLIE";
+  position: absolute;
+  left: clamp(12px, 4vw, 54px);
+  bottom: -0.1em;
+  z-index: 0;
+  white-space: pre;
+  color: rgba(255, 250, 242, 0.07);
+  font-family: Impact, "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(6rem, 23vw, 21rem);
+  line-height: 0.72;
+  letter-spacing: 0;
+  animation: launchType 900ms var(--ease) both;
+}
+
+.launch-screen::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  background: linear-gradient(90deg, transparent, rgba(255, 250, 242, 0.26), transparent);
+  transform: translateX(-120%);
+  animation: launchSweep 980ms 380ms var(--ease) both;
+  pointer-events: none;
+}
+
+.launch-screen.is-complete {
+  pointer-events: none;
+  animation: launchExit 620ms var(--ease) forwards;
+}
+
+.launch-grid {
+  position: absolute;
+  top: clamp(18px, 4vw, 44px);
+  left: clamp(18px, 4vw, 52px);
+  z-index: 2;
+  display: flex;
+  gap: 8px;
+  animation: launchFadeUp 560ms 120ms var(--ease) both;
+}
+
+.launch-grid span {
+  display: inline-flex;
+  min-height: 28px;
+  align-items: center;
+  padding: 0 10px;
+  color: #13100e;
+  background: var(--gold);
+  font-size: 0.76rem;
+  font-weight: 950;
+}
+
+.launch-logo-card {
+  position: relative;
+  z-index: 2;
+  width: min(29vw, 290px);
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  justify-self: start;
+  align-self: center;
+  border: 1px solid rgba(255, 250, 242, 0.16);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.04);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.08),
+    0 34px 90px rgba(0, 0, 0, 0.34);
+  animation: launchLogo 760ms 170ms var(--ease) both;
+}
+
+.launch-logo-card img {
+  width: 78%;
+  height: 78%;
+  object-fit: contain;
+}
+
+.launch-title {
+  position: relative;
+  z-index: 2;
+  width: min(100%, 700px);
+  display: grid;
+  justify-items: start;
+  align-self: center;
+  line-height: 0.78;
+}
+
+.launch-title span {
+  display: block;
+  color: #fffaf2;
+  font-family: Impact, "Arial Black", "Helvetica Neue", Arial, sans-serif;
+  font-size: clamp(4rem, 9vw, 8.4rem);
+  text-transform: uppercase;
+  transform-origin: left center;
+  animation: launchWord 720ms var(--ease) both;
+}
+
+.launch-title span:nth-child(2) {
+  animation-delay: 130ms;
+}
+
+.launch-title small {
+  margin-top: 18px;
+  padding: 5px 10px;
+  color: #13100e;
+  background: #fffaf2;
+  font-size: clamp(0.78rem, 2vw, 1.05rem);
+  font-weight: 950;
+  letter-spacing: 0;
+  text-transform: uppercase;
+  animation: launchFadeUp 560ms 360ms var(--ease) both;
+}
+
+.launch-loader {
+  position: absolute;
+  left: clamp(18px, 4vw, 52px);
+  right: clamp(18px, 4vw, 52px);
+  bottom: clamp(18px, 3vw, 34px);
+  z-index: 2;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 8px;
+}
+
+.launch-loader span {
+  height: 4px;
+  overflow: hidden;
+  background: rgba(255, 250, 242, 0.16);
+}
+
+.launch-loader span::before {
+  content: "";
+  display: block;
+  height: 100%;
+  background: linear-gradient(90deg, var(--brand), var(--gold), var(--green));
+  transform: translateX(-100%);
+  animation: launchLoad 1050ms var(--ease) forwards;
+}
+
+.launch-loader span:nth-child(2)::before {
+  animation-delay: 120ms;
+}
+
+.launch-loader span:nth-child(3)::before {
+  animation-delay: 240ms;
+}
+
+@media (min-width: 1100px) {
+  body:not(.is-access-locked) .app-header {
+    grid-template-rows: auto 1fr auto;
+    gap: 18px;
+    padding: 22px 20px 20px;
+  }
+
+  body:not(.is-access-locked) .header-main {
+    grid-template-columns: 1fr;
+    justify-items: stretch;
+    gap: 0;
+  }
+
+  body:not(.is-access-locked) .menu-button {
+    display: none;
+  }
+
+  body:not(.is-access-locked) .brand-lockup {
+    grid-template-columns: 76px minmax(0, 1fr);
+    gap: 14px;
+    align-items: center;
+    padding: 0 0 18px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  }
+
+  body:not(.is-access-locked) .brand-logo {
+    width: 76px;
+    height: 76px;
+  }
+
+  body:not(.is-access-locked) .brand-lockup h1 {
+    max-width: 168px;
+    color: #ffffff;
+    font-size: clamp(1.85rem, 2.1vw, 2.55rem);
+    line-height: 0.94;
+  }
+
+  body:not(.is-access-locked) .active-page-label {
+    margin-top: 10px;
+  }
+
+  body:not(.is-access-locked) .menu-backdrop {
+    display: none !important;
+  }
+
+  body:not(.is-access-locked) .app-menu {
+    position: fixed;
+    top: 196px;
+    left: 34px;
+    z-index: 31;
+    width: 264px;
+    display: grid;
+    gap: 10px;
+    padding: 0;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    opacity: 1;
+    pointer-events: auto;
+    transform: none;
+  }
+
+  body:not(.is-access-locked) .app-menu-head {
+    display: none;
+  }
+
+  body:not(.is-access-locked) .menu-link {
+    min-height: 52px;
+    grid-template-columns: 38px minmax(0, 1fr) 20px;
+    padding: 0 14px 0 8px;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius);
+    color: rgba(255, 255, 255, 0.78);
+    background: rgba(255, 255, 255, 0.06);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  }
+
+  body:not(.is-access-locked) .menu-link::after {
+    content: ">";
+    color: rgba(255, 255, 255, 0.42);
+  }
+
+  body:not(.is-access-locked) .menu-link-icon {
+    width: 34px;
+    height: 34px;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.08);
+    box-shadow: none;
+  }
+
+  body:not(.is-access-locked) .menu-link:hover,
+  body:not(.is-access-locked) .menu-link.is-active {
+    color: #ffffff;
+    border-color: rgba(231, 189, 85, 0.32);
+    background: rgba(255, 255, 255, 0.11);
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16);
+    transform: translateX(2px);
+  }
+
+  body:not(.is-access-locked) .menu-link.is-active .menu-link-icon {
+    color: #111111;
+    background: var(--gold);
+  }
+
+  body:not(.is-access-locked) .header-actions {
+    align-self: end;
+  }
+}
+
+@media (max-width: 760px) {
+  .launch-screen {
+    grid-template-columns: 1fr;
+    align-content: center;
+    gap: 26px;
+    padding: 20px;
+  }
+
+  .launch-screen::before {
+    font-size: clamp(5.2rem, 28vw, 8.6rem);
+    bottom: 18px;
+  }
+
+  .launch-grid {
+    top: 18px;
+    left: 18px;
+  }
+
+  .launch-logo-card {
+    width: min(58vw, 230px);
+    justify-self: center;
+  }
+
+  .launch-title {
+    justify-self: center;
+    text-align: center;
+    justify-items: center;
+  }
+
+  .launch-title span {
+    font-size: clamp(3.6rem, 18vw, 5.2rem);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .launch-screen,
+  .launch-screen::before,
+  .launch-screen::after,
+  .launch-grid,
+  .launch-logo-card,
+  .launch-title span,
+  .launch-title small,
+  .launch-loader span::before,
+  .launch-screen.is-complete {
+    animation-duration: 1ms !important;
+    animation-delay: 0ms !important;
+  }
+}
+
+@keyframes launchWord {
+  from {
+    opacity: 0;
+    transform: translateY(38px) scaleY(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scaleY(1);
+  }
+}
+
+@keyframes launchType {
+  from {
+    opacity: 0;
+    transform: translateY(58px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes launchLogo {
+  from {
+    opacity: 0;
+    transform: translateY(28px) scale(0.9) rotate(-2deg);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1) rotate(0);
+  }
+}
+
+@keyframes launchFadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes launchSweep {
+  from {
+    transform: translateX(-120%);
+  }
+  to {
+    transform: translateX(120%);
+  }
+}
+
+@keyframes launchLoad {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes launchExit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-18px);
+  }
+}
+
+@keyframes launchAutoExit {
+  0%,
+  72% {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+  }
+  100% {
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-18px);
+  }
+}

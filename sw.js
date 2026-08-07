@@ -1,4 +1,4 @@
-const CACHE_NAME = "burger-folie-planner-v35";
+const CACHE_NAME = "burger-folie-planner-v36";
 const ASSETS = [
   "./",
   "./index.html",

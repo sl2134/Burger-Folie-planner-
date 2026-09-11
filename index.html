@@ -14,8 +14,8 @@
   <title>Burger Folie Timeplanning</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="./app.css?v=45">
-  <link rel="stylesheet" href="./launch.css?v=45">
+  <link rel="stylesheet" href="./app.css?v=46">
+  <link rel="stylesheet" href="./launch.css?v=46">
 </head>
 <body class="is-access-locked">
   <div class="launch-screen" id="launchScreen" aria-hidden="true">
@@ -234,7 +234,12 @@
             </label>
           </div>
 
-          <form id="shiftForm" class="shift-form">
+          <button type="button" class="button ghost manual-toggle" id="manualEntryToggle" aria-expanded="false" aria-controls="shiftForm">
+            <span class="button-icon manual-toggle-icon" aria-hidden="true">+</span>
+            <span class="button-text">Manual / custom shift</span>
+          </button>
+
+          <form id="shiftForm" class="shift-form is-hidden">
             <div class="section-title compact">
               <h2>Shift</h2>
             </div>
@@ -310,7 +315,10 @@
         <div id="calendarGrid" class="calendar-grid"></div>
         <div class="calendar-selected">
           <span id="selectedDateLabel">No date selected</span>
-          <div id="calendarPeople" class="calendar-people" aria-label="People for selected date"></div>
+          <div class="calendar-people-block">
+            <p class="calendar-hint">Tap a name, then a time, to schedule instantly.</p>
+            <div id="calendarPeople" class="calendar-people" aria-label="People for selected date"></div>
+          </div>
         </div>
       </section>
 
@@ -439,7 +447,7 @@
     </div>
   </div>
 
-  <script src="./app.js?v=45" defer></script>
-  <script src="./extras.js?v=45" defer></script>
+  <script src="./app.js?v=46" defer></script>
+  <script src="./extras.js?v=46" defer></script>
 </body>
 </html>

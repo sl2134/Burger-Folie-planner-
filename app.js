@@ -43,6 +43,7 @@ const elements = {
   startInput: document.getElementById("startInput"),
   endInput: document.getElementById("endInput"),
   shiftForm: document.getElementById("shiftForm"),
+  manualEntryToggle: document.getElementById("manualEntryToggle"),
   shiftTable: document.getElementById("shiftTable"),
   clearShiftsButton: document.getElementById("clearShiftsButton"),
   resetFormButton: document.getElementById("resetFormButton"),
@@ -294,6 +295,12 @@ function bindEvents() {
   elements.shiftForm.addEventListener("submit", event => {
     event.preventDefault();
     addShiftFromForm();
+  });
+
+  elements.manualEntryToggle?.addEventListener("click", () => {
+    const nowHidden = elements.shiftForm.classList.toggle("is-hidden");
+    elements.manualEntryToggle.setAttribute("aria-expanded", String(!nowHidden));
+    elements.manualEntryToggle.classList.toggle("is-active", !nowHidden);
   });
 
   elements.resetFormButton.addEventListener("click", () => {

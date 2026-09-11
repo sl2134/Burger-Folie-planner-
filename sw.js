@@ -1,11 +1,11 @@
-const CACHE_NAME = "burger-folie-planner-v45";
+const CACHE_NAME = "burger-folie-planner-v46";
 const ASSETS = [
   "./",
   "./index.html",
-  "./app.css?v=45",
-  "./launch.css?v=45",
-  "./app.js?v=45",
-  "./extras.js?v=45",
+  "./app.css?v=46",
+  "./launch.css?v=46",
+  "./app.js?v=46",
+  "./extras.js?v=46",
   "./manifest.webmanifest",
   "./assets/burger-folie-logo.png",
   "./assets/apple-touch-icon.png",

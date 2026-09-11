@@ -14,8 +14,8 @@
   <title>Burger Folie Timeplanning</title>
   <link rel="manifest" href="./manifest.webmanifest">
   <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="./app.css?v=46">
-  <link rel="stylesheet" href="./launch.css?v=46">
+  <link rel="stylesheet" href="./app.css?v=47">
+  <link rel="stylesheet" href="./launch.css?v=47">
 </head>
 <body class="is-access-locked">
   <div class="launch-screen" id="launchScreen" aria-hidden="true">
@@ -66,6 +66,29 @@
         </div>
       </div>
     </div>
+
+    <nav class="app-menu" id="appMenu" aria-label="App pages">
+      <div class="app-menu-head">
+        <img src="./assets/burger-folie-logo.png" alt="" class="menu-logo">
+        <div>
+          <strong>Burger Folie</strong>
+          <span>Timeplanning</span>
+        </div>
+      </div>
+      <button type="button" class="menu-link is-active" data-page="planner">
+        <span class="menu-link-icon" aria-hidden="true">P</span>
+        <span>Planner</span>
+      </button>
+      <button type="button" class="menu-link" data-page="people">
+        <span class="menu-link-icon" aria-hidden="true">T</span>
+        <span>People</span>
+      </button>
+      <button type="button" class="menu-link" data-transfer-page="transfer">
+        <span class="menu-link-icon" aria-hidden="true">E</span>
+        <span>Export Data</span>
+      </button>
+    </nav>
+
     <div class="header-actions" aria-label="Export actions">
       <button type="button" class="button primary action-button" id="pdfButton">
         <span class="button-icon icon-pdf" aria-hidden="true">
@@ -99,31 +122,10 @@
   </header>
 
   <div class="menu-backdrop is-hidden" id="menuBackdrop"></div>
-  <nav class="app-menu" id="appMenu" aria-label="App pages">
-    <div class="app-menu-head">
-      <img src="./assets/burger-folie-logo.png" alt="" class="menu-logo">
-      <div>
-        <strong>Burger Folie</strong>
-        <span>Timeplanning</span>
-      </div>
-    </div>
-    <button type="button" class="menu-link is-active" data-page="planner">
-      <span class="menu-link-icon" aria-hidden="true">P</span>
-      <span>Planner</span>
-    </button>
-    <button type="button" class="menu-link" data-page="people">
-      <span class="menu-link-icon" aria-hidden="true">T</span>
-      <span>People</span>
-    </button>
-    <button type="button" class="menu-link" data-transfer-page="transfer">
-      <span class="menu-link-icon" aria-hidden="true">E</span>
-      <span>Export Data</span>
-    </button>
-  </nav>
 
   <main>
     <section class="page-view people-page" id="peoplePage" data-page-view="people" aria-label="People page">
-      <form id="personForm" class="people-form">
+      <form id="personForm" class="people-form page-shell">
         <div class="page-card">
           <div class="section-title">
             <div>
@@ -148,7 +150,7 @@
     </section>
 
     <section class="page-view transfer-page" id="transferPage" data-page-view="transfer" aria-label="Export data page">
-      <div class="transfer-layout">
+      <div class="transfer-layout page-shell">
         <section class="page-card transfer-card transfer-card-primary">
           <div class="section-title">
             <div>
@@ -212,18 +214,20 @@
     </section>
 
     <section class="page-view is-active" id="plannerPage" data-page-view="planner" aria-label="Planner page">
-      <div class="planner-layout">
-        <section class="tool-panel" aria-label="Planning editor">
-          <div class="section-title">
-            <h2>Document</h2>
-            <span id="plannerSaveState">Ready</span>
+      <div class="page-shell planner-layout">
+        <div class="planner-toolbar">
+          <div class="planner-toolbar-row">
+            <div class="planner-title-field">
+              <p class="eyebrow">Plan</p>
+              <input id="titleInput" type="text" value="Planning Burger Folie" aria-label="Planning title">
+            </div>
+            <div class="metrics">
+              <span id="peopleCount">0 people</span>
+              <span id="shiftCount">0 shifts</span>
+              <span id="dateRange">No dates</span>
+            </div>
           </div>
-
-          <div class="field-grid">
-            <label class="field wide">
-              <span>Title</span>
-              <input id="titleInput" type="text" value="Planning Burger Folie">
-            </label>
+          <div class="planner-week-row">
             <label class="field">
               <span>Week from</span>
               <input id="weekStartInput" type="date">
@@ -232,8 +236,36 @@
               <span>Week until</span>
               <input id="weekEndInput" type="date">
             </label>
+            <span id="plannerSaveState">Ready</span>
           </div>
+        </div>
 
+        <section class="calendar-panel" id="calendarSection" aria-label="Calendar planning">
+          <div class="calendar-toolbar">
+            <button type="button" class="icon-button" id="prevMonthButton" aria-label="Previous month">‹</button>
+            <h2 id="calendarMonthLabel">Month</h2>
+            <button type="button" class="icon-button" id="nextMonthButton" aria-label="Next month">›</button>
+          </div>
+          <div class="calendar-weekdays" aria-hidden="true">
+            <span>Mon</span>
+            <span>Tue</span>
+            <span>Wed</span>
+            <span>Thu</span>
+            <span>Fri</span>
+            <span>Sat</span>
+            <span>Sun</span>
+          </div>
+          <div id="calendarGrid" class="calendar-grid"></div>
+          <div class="calendar-selected">
+            <span id="selectedDateLabel">No date selected</span>
+            <div class="calendar-people-block">
+              <p class="calendar-hint">Tap a name, then a time, to schedule instantly.</p>
+              <div id="calendarPeople" class="calendar-people" aria-label="People for selected date"></div>
+            </div>
+          </div>
+        </section>
+
+        <section class="page-card" aria-label="Manual shift entry">
           <button type="button" class="button ghost manual-toggle" id="manualEntryToggle" aria-expanded="false" aria-controls="shiftForm">
             <span class="button-icon manual-toggle-icon" aria-hidden="true">+</span>
             <span class="button-text">Manual / custom shift</span>
@@ -284,59 +316,20 @@
           </form>
         </section>
 
-        <section class="planning-panel" aria-label="Planning preview">
-      <div class="planning-head">
-        <div>
-          <p class="eyebrow">Preview</p>
-          <h2 id="previewTitle">Planning Burger Folie</h2>
+        <div class="table-shell" id="shiftListSection">
+          <table>
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Person</th>
+                <th>Start</th>
+                <th>End</th>
+                <th class="actions-column">Actions</th>
+              </tr>
+            </thead>
+            <tbody id="shiftTable"></tbody>
+          </table>
         </div>
-        <div class="metrics">
-          <span id="peopleCount">0 people</span>
-          <span id="shiftCount">0 shifts</span>
-          <span id="dateRange">No dates</span>
-        </div>
-      </div>
-
-      <section class="calendar-panel" id="calendarSection" aria-label="Calendar planning">
-        <div class="calendar-toolbar">
-          <button type="button" class="icon-button" id="prevMonthButton" aria-label="Previous month">‹</button>
-          <h2 id="calendarMonthLabel">Month</h2>
-          <button type="button" class="icon-button" id="nextMonthButton" aria-label="Next month">›</button>
-        </div>
-        <div class="calendar-weekdays" aria-hidden="true">
-          <span>Mon</span>
-          <span>Tue</span>
-          <span>Wed</span>
-          <span>Thu</span>
-          <span>Fri</span>
-          <span>Sat</span>
-          <span>Sun</span>
-        </div>
-        <div id="calendarGrid" class="calendar-grid"></div>
-        <div class="calendar-selected">
-          <span id="selectedDateLabel">No date selected</span>
-          <div class="calendar-people-block">
-            <p class="calendar-hint">Tap a name, then a time, to schedule instantly.</p>
-            <div id="calendarPeople" class="calendar-people" aria-label="People for selected date"></div>
-          </div>
-        </div>
-      </section>
-
-      <div class="table-shell" id="shiftListSection">
-        <table>
-          <thead>
-            <tr>
-              <th>Date</th>
-              <th>Person</th>
-              <th>Start</th>
-              <th>End</th>
-              <th class="actions-column">Actions</th>
-            </tr>
-          </thead>
-          <tbody id="shiftTable"></tbody>
-        </table>
-      </div>
-        </section>
       </div>
     </section>
   </main>
@@ -447,7 +440,7 @@
     </div>
   </div>
 
-  <script src="./app.js?v=46" defer></script>
-  <script src="./extras.js?v=46" defer></script>
+  <script src="./app.js?v=47" defer></script>
+  <script src="./extras.js?v=47" defer></script>
 </body>
 </html>

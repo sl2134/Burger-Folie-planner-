@@ -66,7 +66,6 @@ const elements = {
   saveButton: document.getElementById("saveButton"),
   saveState: document.getElementById("saveState"),
   plannerSaveState: document.getElementById("plannerSaveState"),
-  previewTitle: document.getElementById("previewTitle"),
   peopleCount: document.getElementById("peopleCount"),
   shiftCount: document.getElementById("shiftCount"),
   dateRange: document.getElementById("dateRange"),
@@ -691,6 +690,7 @@ function renderPeople() {
     const chip = document.createElement("span");
     chip.className = "person-chip";
     chip.innerHTML = `
+      <span class="avatar-dot sm ${personAvatarClass(person)}">${escapeHtml(personInitials(person))}</span>
       <span>${escapeHtml(person)}</span>
       <button type="button" data-person="${escapeAttribute(person)}" title="Remove ${escapeAttribute(person)}" aria-label="Remove ${escapeAttribute(person)}">×</button>
     `;
@@ -725,7 +725,10 @@ function renderCalendarPeople() {
     button.type = "button";
     button.className = "calendar-person-button";
     button.dataset.person = person;
-    button.textContent = person;
+    button.innerHTML = `
+      <span class="avatar-dot sm ${personAvatarClass(person)}">${escapeHtml(personInitials(person))}</span>
+      <span>${escapeHtml(person)}</span>
+    `;
     wrap.appendChild(button);
     fragment.appendChild(wrap);
   });
@@ -770,9 +773,36 @@ function renderCalendar() {
 }
 
 function calendarShiftPreview(dayShifts) {
-  return dayShifts.slice(0, 3).map(shift =>
-    `<span class="calendar-shift-pill">${escapeHtml(shift.name)} ${escapeHtml(shift.start || "")}</span>`
-  ).join("");
+  const visible = dayShifts.slice(0, 4).map(shift => {
+    const title = `${shift.name}${shift.start ? ` ${shift.start}` : ""}`;
+    return `<span class="avatar-dot sm ${personAvatarClass(shift.name)}" title="${escapeAttribute(title)}">${escapeHtml(personInitials(shift.name))}</span>`;
+  }).join("");
+
+  const overflow = dayShifts.length > 4
+    ? `<span class="calendar-shift-more">+${dayShifts.length - 4}</span>`
+    : "";
+
+  return visible + overflow;
+}
+
+function personAvatarClass(name) {
+  const value = String(name || "");
+  let hash = 0;
+  for (let index = 0; index < value.length; index += 1) {
+    hash = (hash * 31 + value.charCodeAt(index)) % 10;
+  }
+  return `avatar-hue-${hash < 0 ? hash + 10 : hash}`;
+}
+
+function personInitials(name) {
+  const parts = String(name || "").trim().split(/\s+/).filter(Boolean);
+  if (!parts.length) {
+    return "?";
+  }
+  const initials = parts.length === 1
+    ? parts[0].slice(0, 2)
+    : parts[0][0] + parts[parts.length - 1][0];
+  return initials.toUpperCase();
 }
 
 function renderPersonSelect(selectedValue = elements.personSelect.value) {
@@ -838,7 +868,6 @@ function personSelectHtml(selectedName) {
 }
 
 function renderSummary() {
-  elements.previewTitle.textContent = elements.titleInput.value.trim() || "Planning Burger Folie";
   elements.peopleCount.textContent = `${people.length} ${people.length === 1 ? "person" : "people"}`;
   elements.shiftCount.textContent = `${shifts.length} ${shifts.length === 1 ? "shift" : "shifts"}`;
 

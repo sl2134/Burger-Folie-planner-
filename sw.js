@@ -1,4 +1,4 @@
-const CACHE_NAME = "burger-folie-planner-v47";
+const CACHE_NAME = "burger-folie-planner-v48";
 const ASSETS = [
   "./",
   "./index.html",
@@ -6,6 +6,7 @@ const ASSETS = [
   "./launch.css?v=47",
   "./app.js?v=47",
   "./extras.js?v=47",
+  "./sync.js?v=1",
   "./manifest.webmanifest",
   "./assets/burger-folie-logo.png",
   "./assets/apple-touch-icon.png",
@@ -31,6 +32,12 @@ self.addEventListener("activate", event => {
 
 self.addEventListener("fetch", event => {
   if (event.request.method !== "GET") {
+    return;
+  }
+
+  if (new URL(event.request.url).origin !== self.location.origin) {
+    // Leave cross-origin calls (e.g. the GitHub sync API) to the network only,
+    // never cached, so sync always reads and writes live data.
     return;
   }
 

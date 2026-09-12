@@ -1,6 +1,6 @@
 const STORAGE_KEY = "burger-folie-planner-v2";
 const ACCESS_STORAGE_KEY = "burger-folie-access-v1";
-const ACCESS_HASH = "178980ca09a479911ee12e3292adfdf8e0be448383c5dea96a21588d55e834b6";
+const ACCESS_HASH = "5ca54fb8647d5ac5e559ef9e26fc1b1fb6400351e50923d50ae5876b20c36d77";
 const LOGO_URL = "./assets/burger-folie-logo.png";
 const DEFAULT_END_TIME = "22:00";
 const REGULAR_STARTS = {

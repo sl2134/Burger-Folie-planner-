@@ -1,13 +1,14 @@
-const CACHE_NAME = "burger-folie-planner-v49";
+const CACHE_NAME = "burger-folie-planner-v50";
 const ASSETS = [
   "./",
   "./index.html",
-  "./app.css?v=47",
-  "./launch.css?v=47",
-  "./app.js?v=49",
-  "./extras.js?v=47",
-  "./sync.js?v=1",
-  "./manifest.webmanifest",
+  "./?source=pwa",
+  "./app.css?v=50",
+  "./launch.css?v=50",
+  "./app.js?v=50",
+  "./extras.js?v=50",
+  "./sync.js?v=50",
+  "./manifest.webmanifest?v=50",
   "./assets/burger-folie-logo.png",
   "./assets/apple-touch-icon.png",
   "./assets/icon-192.png",
@@ -48,6 +49,11 @@ self.addEventListener("fetch", event => {
         caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
         return response;
       })
-      .catch(() => caches.match(event.request))
+      .catch(() => {
+        if (event.request.mode === "navigate") {
+          return caches.match("./index.html", { ignoreSearch: true });
+        }
+        return caches.match(event.request, { ignoreSearch: true });
+      })
   );
 });

@@ -1,12 +1,16 @@
 {
   "name": "Burger Folie Timeplanning",
   "short_name": "BF Planner",
-  "id": "./index.html",
-  "start_url": "./index.html",
+  "description": "Staff timeplanning app for Burger Folie shifts, exports, and calendar sharing.",
+  "id": "/Burger-Folie-planner-/",
+  "start_url": "./?source=pwa",
   "scope": "./",
+  "lang": "en",
   "display": "standalone",
+  "display_override": ["standalone", "minimal-ui"],
   "background_color": "#fbfaf6",
-  "theme_color": "#111111",
+  "theme_color": "#f7f4ed",
+  "categories": ["business", "productivity", "utilities"],
   "icons": [
     {
       "src": "./assets/icon-192.png",
@@ -18,6 +22,26 @@
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Planner",
+      "short_name": "Planner",
+      "url": "./?source=pwa",
+      "icons": [{ "src": "./assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "People",
+      "short_name": "People",
+      "url": "./?source=pwa#people",
+      "icons": [{ "src": "./assets/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Export Data",
+      "short_name": "Export",
+      "url": "./?source=pwa#transfer",
+      "icons": [{ "src": "./assets/icon-192.png", "sizes": "192x192" }]
     }
   ]
 }

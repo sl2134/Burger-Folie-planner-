@@ -6,11 +6,12 @@
   z-index: 100;
   display: grid;
   place-items: center;
-  padding: clamp(20px, 5vw, 60px);
+  padding: 24px;
   overflow: hidden;
   color: #fffaf2;
+  pointer-events: none;
   background: radial-gradient(120% 120% at 20% 0%, #241a14 0%, #16130f 46%, #0d0b09 100%);
-  animation: launchAutoExit 1900ms var(--ease) forwards;
+  animation: launchAutoExit 900ms var(--ease) forwards;
 }
 
 .launch-screen.is-complete {
@@ -21,13 +22,13 @@
 .launch-logo-card {
   position: relative;
   z-index: 2;
-  width: min(34vw, 128px);
+  width: min(34vw, 104px);
   aspect-ratio: 1;
   display: grid;
   place-items: center;
   margin: 0 auto 22px;
   border: 1px solid rgba(255, 250, 242, 0.14);
-  border-radius: 22px;
+  border-radius: 8px;
   background: rgba(255, 255, 255, 0.04);
   box-shadow: 0 24px 60px rgba(0, 0, 0, 0.34);
   animation: launchLogo 620ms 100ms var(--ease) both;
@@ -51,9 +52,9 @@
 .launch-title span {
   display: inline;
   color: #fffaf2;
-  font-size: clamp(1.7rem, 6vw, 2.6rem);
+  font-size: 2rem;
   font-weight: 800;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   animation: launchFadeUp 460ms 160ms var(--ease) both;
 }
 
@@ -67,16 +68,16 @@
   color: rgba(255, 250, 242, 0.5);
   font-size: 0.82rem;
   font-weight: 700;
-  letter-spacing: 0.08em;
+  letter-spacing: 0;
   text-transform: uppercase;
   animation: launchFadeUp 460ms 260ms var(--ease) both;
 }
 
 .launch-loader {
   position: absolute;
-  left: clamp(20px, 5vw, 60px);
-  right: clamp(20px, 5vw, 60px);
-  bottom: clamp(20px, 4vw, 44px);
+  left: 24px;
+  right: 24px;
+  bottom: 24px;
   z-index: 2;
   display: grid;
   grid-template-columns: repeat(3, 1fr);

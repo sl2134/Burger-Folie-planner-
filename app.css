@@ -1,5 +1,5 @@
 /* ============================================================
-   Burger Folie Timeplanning — design system (v47)
+   Burger Folie Timeplanning — clean app system (v50)
    One coherent system: tokens, base, components, responsive shell.
    Mobile-first; sidebar/desktop rules layer on top with min-width.
    ============================================================ */
@@ -8,46 +8,46 @@
   color-scheme: light;
 
   /* Surfaces */
-  --bg: #f4f2ee;
-  --surface: #ffffff;
-  --surface-2: #fbfaf7;
-  --surface-sunk: #eeece6;
-  --border: #e4e0d7;
-  --border-strong: #d3cdc0;
+  --bg: #f7f4ed;
+  --surface: #fffdf8;
+  --surface-2: #f3efe7;
+  --surface-sunk: #ebe5da;
+  --border: #ddd4c5;
+  --border-strong: #c7baa8;
 
   /* Text */
-  --ink: #1d1a16;
-  --ink-soft: #55503f;
-  --muted: #8a8372;
+  --ink: #211d18;
+  --ink-soft: #5a5146;
+  --muted: #7c7265;
 
   /* Brand */
-  --brand: #d8432c;
-  --brand-strong: #b8341f;
-  --brand-soft: #fbe6e1;
-  --gold: #c8901f;
-  --gold-soft: #f7ecd3;
-  --green: #1f8a5c;
+  --brand: #cf3f2f;
+  --brand-strong: #a83225;
+  --brand-soft: #f8ded8;
+  --gold: #b78320;
+  --gold-soft: #f5e8c9;
+  --green: #16835d;
   --green-soft: #dff2e8;
 
   /* Ink surfaces (sidebar, dark cards) */
-  --ink-900: #16130f;
-  --ink-800: #211c17;
-  --ink-700: #2c251e;
+  --ink-900: #201b16;
+  --ink-800: #2a241d;
+  --ink-700: #363027;
 
   /* Structure */
-  --radius-lg: 18px;
-  --radius-md: 12px;
-  --radius-sm: 9px;
-  --shadow-xs: 0 1px 2px rgba(22, 19, 15, 0.06);
-  --shadow-sm: 0 4px 14px rgba(22, 19, 15, 0.07);
-  --shadow-md: 0 12px 30px rgba(22, 19, 15, 0.11);
-  --shadow-lg: 0 28px 64px rgba(22, 19, 15, 0.22);
+  --radius-lg: 8px;
+  --radius-md: 8px;
+  --radius-sm: 7px;
+  --shadow-xs: 0 1px 2px rgba(32, 27, 22, 0.05);
+  --shadow-sm: 0 6px 16px rgba(32, 27, 22, 0.06);
+  --shadow-md: 0 16px 34px rgba(32, 27, 22, 0.1);
+  --shadow-lg: 0 28px 70px rgba(32, 27, 22, 0.18);
   --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
   --speed: 160ms;
 
   /* Shell metrics */
   --sidebar-w: 268px;
-  --topbar-h: 64px;
+  --topbar-h: 68px;
 }
 
 * {
@@ -56,7 +56,7 @@
 
 html {
   min-height: 100%;
-  background: var(--bg);
+  background: linear-gradient(180deg, #fbfaf6 0%, var(--bg) 260px);
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
 }
@@ -66,7 +66,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   color: var(--ink);
-  background: var(--bg);
+  background: linear-gradient(180deg, #fbfaf6 0%, var(--bg) 260px);
   font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
   font-size: 16px;
   line-height: 1.45;
@@ -115,12 +115,12 @@ h1,
 h2,
 h3 {
   line-height: 1.15;
-  letter-spacing: -0.01em;
+  letter-spacing: 0;
   font-weight: 800;
 }
 
-h1 { font-size: clamp(1.2rem, 2vw, 1.6rem); }
-h2 { font-size: clamp(1.05rem, 1.6vw, 1.28rem); }
+h1 { font-size: 1.45rem; }
+h2 { font-size: 1.16rem; }
 h3 { font-size: 1rem; }
 
 .is-hidden,
@@ -133,7 +133,7 @@ h3 { font-size: 1rem; }
   color: var(--brand);
   font-size: 0.68rem;
   font-weight: 800;
-  letter-spacing: 0.06em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -199,12 +199,12 @@ h3 { font-size: 1rem; }
 .button.primary {
   color: #ffffff;
   background: var(--brand);
-  box-shadow: 0 10px 22px rgba(216, 67, 44, 0.28);
+  box-shadow: 0 8px 18px rgba(207, 63, 47, 0.18);
 }
 
 .button.primary:hover {
   background: var(--brand-strong);
-  box-shadow: 0 14px 28px rgba(216, 67, 44, 0.34);
+  box-shadow: 0 10px 22px rgba(207, 63, 47, 0.22);
 }
 
 .button.ghost {
@@ -232,7 +232,7 @@ h3 { font-size: 1rem; }
 .button.whatsapp {
   color: #ffffff;
   background: #1fa855;
-  box-shadow: 0 10px 22px rgba(31, 168, 85, 0.28);
+  box-shadow: 0 8px 18px rgba(31, 168, 85, 0.18);
 }
 
 .button.whatsapp:hover {
@@ -316,7 +316,7 @@ th {
   color: var(--muted);
   font-size: 0.7rem;
   font-weight: 800;
-  letter-spacing: 0.05em;
+  letter-spacing: 0;
   text-transform: uppercase;
 }
 
@@ -531,7 +531,7 @@ body:not(.is-access-locked) .access-gate {
   width: 100%;
   display: grid;
   gap: 16px;
-  padding: clamp(26px, 5vw, 38px);
+  padding: 34px;
   border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: var(--radius-lg);
   background: var(--ink-800);
@@ -551,7 +551,7 @@ body:not(.is-access-locked) .access-gate {
 
 .access-card h1 {
   color: #fffaf5;
-  font-size: clamp(1.4rem, 6vw, 1.9rem);
+  font-size: 1.72rem;
 }
 
 .access-card .eyebrow {
@@ -1035,7 +1035,7 @@ main {
   padding: 0;
   min-height: auto;
   color: var(--ink);
-  font-size: clamp(1.05rem, 2vw, 1.35rem);
+  font-size: 1.24rem;
   font-weight: 800;
 }
 
@@ -1186,7 +1186,7 @@ main {
 }
 
 .calendar-day-number {
-  font-size: clamp(0.92rem, 1.6vw, 1.1rem);
+  font-size: 1rem;
   font-weight: 800;
   line-height: 1;
 }
@@ -1635,7 +1635,7 @@ body.is-export-range-open {
   min-width: 0;
   overflow: hidden;
   color: var(--ink);
-  font-size: clamp(1.05rem, 2vw, 1.4rem);
+  font-size: 1.2rem;
   font-weight: 800;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -1902,5 +1902,344 @@ body.is-export-range-open {
 
   .header-actions .button-text {
     font-size: 0.62rem;
+  }
+}
+
+/* ============================================================
+   Clean app refresh (v50)
+   ============================================================ */
+
+body.is-access-locked .install-overlay {
+  display: none !important;
+}
+
+.app-header {
+  color: var(--ink);
+  background: rgba(255, 253, 248, 0.94);
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 1px 0 rgba(32, 27, 22, 0.04);
+  backdrop-filter: blur(14px);
+}
+
+.brand-logo,
+.menu-logo {
+  border: 1px solid var(--border);
+  background: var(--ink);
+}
+
+.brand-lockup h1 {
+  color: var(--ink);
+}
+
+.active-page-label {
+  display: block;
+  color: var(--muted);
+  font-size: 0.72rem;
+  font-weight: 700;
+}
+
+.menu-button {
+  border-color: var(--border);
+  background: var(--surface-2);
+}
+
+.menu-button span {
+  background: var(--ink);
+}
+
+.menu-button:hover,
+.menu-button[aria-expanded="true"] {
+  border-color: rgba(207, 63, 47, 0.45);
+  background: var(--brand-soft);
+}
+
+.header-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  overflow-x: auto;
+  gap: 8px;
+  padding: 8px 0 0;
+  border-top: 1px solid var(--border);
+  scrollbar-width: none;
+}
+
+.header-actions::-webkit-scrollbar {
+  display: none;
+}
+
+.header-actions .button {
+  min-width: 84px;
+  flex: 0 0 auto;
+  color: var(--ink-soft);
+  background: #ffffff;
+  border-color: var(--border);
+  box-shadow: none;
+}
+
+.header-actions .button.primary,
+.header-actions .button.whatsapp {
+  color: #ffffff;
+  border-color: transparent;
+}
+
+.header-actions .install-action {
+  color: var(--brand-strong);
+  background: var(--brand-soft);
+  border-color: rgba(207, 63, 47, 0.22);
+}
+
+.menu-backdrop {
+  background: rgba(32, 27, 22, 0.34);
+}
+
+.app-menu {
+  background: var(--surface);
+  border-right: 1px solid var(--border);
+}
+
+.app-menu-head {
+  color: var(--ink);
+  border-bottom-color: var(--border);
+}
+
+.app-menu-head span {
+  color: var(--muted);
+}
+
+.menu-link {
+  color: var(--ink-soft);
+}
+
+.menu-link-icon {
+  color: var(--ink-soft);
+  background: var(--surface-2);
+}
+
+.menu-link-icon svg {
+  width: 17px;
+  height: 17px;
+}
+
+.menu-link-icon svg path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.menu-link:hover {
+  color: var(--ink);
+  background: var(--surface-2);
+}
+
+.menu-link.is-active {
+  color: var(--brand-strong);
+  background: var(--brand-soft);
+}
+
+.menu-link.is-active .menu-link-icon {
+  color: #ffffff;
+  background: var(--brand);
+}
+
+.page-shell {
+  padding-top: 18px;
+}
+
+.page-card,
+.planner-toolbar,
+.calendar-panel,
+.table-shell {
+  background: rgba(255, 253, 248, 0.96);
+  border-color: var(--border);
+  box-shadow: var(--shadow-xs);
+}
+
+.planner-toolbar {
+  gap: 12px;
+}
+
+.planner-title-field {
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 2px;
+}
+
+#titleInput {
+  line-height: 1.2;
+}
+
+.metrics span,
+#saveState,
+#plannerSaveState,
+.transfer-status {
+  border-radius: var(--radius-sm);
+}
+
+.metrics span {
+  border: 1px solid var(--border);
+  background: #ffffff;
+}
+
+.planner-week-row {
+  align-items: end;
+}
+
+.calendar-toolbar h2 {
+  font-size: 1.08rem;
+}
+
+.calendar-day {
+  background: #ffffff;
+}
+
+.calendar-day.is-selected {
+  color: #ffffff;
+  border-color: var(--brand);
+  background: var(--brand);
+  box-shadow: 0 10px 24px rgba(207, 63, 47, 0.16);
+}
+
+.calendar-day.is-today {
+  border-color: var(--gold);
+  box-shadow: inset 0 0 0 1px rgba(183, 131, 32, 0.45);
+}
+
+#selectedDateLabel {
+  border-radius: var(--radius-sm);
+  background: var(--ink);
+}
+
+.calendar-person-button {
+  border-radius: var(--radius-sm);
+  background: #ffffff;
+}
+
+.manual-toggle {
+  justify-content: flex-start;
+}
+
+.share-overlay,
+.export-range-overlay,
+.install-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(32, 27, 22, 0.42);
+  backdrop-filter: blur(8px);
+  animation: fadeIn 150ms var(--ease) both;
+}
+
+.install-overlay.is-hidden {
+  display: none !important;
+}
+
+body.is-install-open {
+  overflow: hidden;
+}
+
+.install-card {
+  width: min(100%, 440px);
+  display: grid;
+  gap: 16px;
+  padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface);
+  box-shadow: var(--shadow-lg);
+  animation: modalIn 220ms var(--ease) both;
+}
+
+.install-copy {
+  color: var(--ink-soft);
+}
+
+.install-steps {
+  display: grid;
+  grid-template-columns: 30px minmax(0, 1fr);
+  gap: 10px 12px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  background: var(--surface-2);
+}
+
+.install-steps span {
+  width: 30px;
+  height: 30px;
+  display: inline-grid;
+  place-items: center;
+  border-radius: var(--radius-sm);
+  color: #ffffff;
+  background: var(--brand);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.install-steps p {
+  align-self: center;
+  color: var(--ink-soft);
+  font-weight: 700;
+}
+
+.install-confirm {
+  width: 100%;
+}
+
+@media (min-width: 1024px) {
+  .app-header {
+    background: rgba(255, 253, 248, 0.97);
+    border-right: 1px solid var(--border);
+  }
+
+  .app-menu {
+    border-right: 0;
+    background: transparent;
+  }
+
+  .header-actions {
+    display: grid;
+    grid-template-columns: 1fr;
+    overflow: visible;
+    gap: 7px;
+    padding-top: 14px;
+    border-top: 1px solid var(--border);
+  }
+
+  .header-actions .button {
+    min-width: 0;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 639px) {
+  .access-card {
+    padding: 24px;
+  }
+
+  .header-actions {
+    margin-inline: -12px;
+    padding-inline: 12px;
+  }
+
+  .header-actions .button {
+    min-width: 76px;
+  }
+
+  .planner-title-field {
+    flex-basis: 100%;
+  }
+
+  #titleInput {
+    font-size: 1.1rem;
+  }
+
+  .calendar-day-number {
+    font-size: 0.88rem;
   }
 }

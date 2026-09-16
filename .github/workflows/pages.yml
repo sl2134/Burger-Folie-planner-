@@ -31,7 +31,7 @@ jobs:
       - name: Prepare static files
         run: |
           mkdir -p _site
-          cp index.html app.css launch.css app.js extras.js sw.js manifest.webmanifest _site/
+          cp index.html app.css modern.css launch.css app.js modern.js extras.js sync.js sw.js manifest.webmanifest _site/
           cp -R assets _site/assets
           touch _site/.nojekyll
 

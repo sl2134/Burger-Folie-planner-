@@ -12,7 +12,8 @@ const weekdays = ["zondag", "maandag", "dinsdag", "woensdag", "donderdag", "vrij
 const calendarWeekdays = ["mon", "tue", "wed", "thu", "fri", "sat", "sun"];
 const PAGE_LABELS = {
   planner: "Planner",
-  people: "People"
+  people: "People",
+  transfer: "Export Data"
 };
 
 const elements = {
@@ -53,6 +54,11 @@ const elements = {
   googleCalendarButton: document.getElementById("googleCalendarButton"),
   whatsappButton: document.getElementById("whatsappButton"),
   whatsappButtonLabel: document.querySelector("#whatsappButton .button-text"),
+  installAppButton: document.getElementById("installAppButton"),
+  installOverlay: document.getElementById("installOverlay"),
+  installCopy: document.getElementById("installCopy"),
+  installConfirmButton: document.getElementById("installConfirmButton"),
+  closeInstallOverlayButton: document.getElementById("closeInstallOverlayButton"),
   shareOverlay: document.getElementById("shareOverlay"),
   whatsappMessage: document.getElementById("whatsappMessage"),
   sharePdfLink: document.getElementById("sharePdfLink"),
@@ -86,6 +92,7 @@ let preparedShareUrls = [];
 let preparedNativeFiles = [];
 let appStarted = false;
 let accessFormBound = false;
+let deferredInstallPrompt = null;
 
 async function boot() {
   if (!await ensureAccess()) {
@@ -212,8 +219,8 @@ function getAccessFromHash() {
 
 function getPageFromHash() {
   const raw = location.hash.slice(1);
-  if (raw === "people") {
-    return "people";
+  if (PAGE_LABELS[raw]) {
+    return raw;
   }
   const params = new URLSearchParams(raw);
   return PAGE_LABELS[params.get("page")] ? params.get("page") : "planner";
@@ -223,9 +230,10 @@ function sanitizeAccessHash(page) {
   if (!getAccessFromHash()) {
     return;
   }
-  const nextUrl = page === "people"
-    ? `${location.pathname}${location.search}#people`
-    : `${location.pathname}${location.search}`;
+  const nextPage = PAGE_LABELS[page] ? page : "planner";
+  const nextUrl = nextPage === "planner"
+    ? `${location.pathname}${location.search}`
+    : `${location.pathname}${location.search}#${nextPage}`;
   history.replaceState(null, "", nextUrl);
 }
 
@@ -260,6 +268,7 @@ function bindEvents() {
     if (event.key === "Escape") {
       closeMenu();
       closeSharePanel();
+      closeInstallPanel();
     }
   });
   elements.appMenu.addEventListener("click", event => {
@@ -331,6 +340,14 @@ function bindEvents() {
   elements.appleCalendarButton.addEventListener("click", () => exportCalendar("apple"));
   elements.googleCalendarButton.addEventListener("click", () => exportCalendar("google"));
   elements.whatsappButton.addEventListener("click", shareToWhatsApp);
+  elements.installAppButton?.addEventListener("click", handleInstallApp);
+  elements.closeInstallOverlayButton?.addEventListener("click", closeInstallPanel);
+  elements.installConfirmButton?.addEventListener("click", confirmInstallAction);
+  elements.installOverlay?.addEventListener("click", event => {
+    if (event.target === elements.installOverlay) {
+      closeInstallPanel();
+    }
+  });
   elements.closeShareButton.addEventListener("click", closeSharePanel);
   elements.shareOverlay.addEventListener("click", event => {
     if (event.target === elements.shareOverlay) {
@@ -469,6 +486,100 @@ function installInteractionEffects() {
   });
 }
 
+function setupInstallExperience() {
+  window.addEventListener("beforeinstallprompt", event => {
+    event.preventDefault();
+    deferredInstallPrompt = event;
+    updateInstallButtonState();
+  });
+
+  window.addEventListener("appinstalled", () => {
+    deferredInstallPrompt = null;
+    closeInstallPanel();
+    updateInstallButtonState();
+    setStatus("App installed");
+  });
+
+  updateInstallButtonState();
+}
+
+function isStandaloneApp() {
+  return window.matchMedia?.("(display-mode: standalone)").matches || window.navigator.standalone === true;
+}
+
+function updateInstallButtonState() {
+  if (!elements.installAppButton) {
+    return;
+  }
+  elements.installAppButton.hidden = isStandaloneApp();
+}
+
+async function handleInstallApp() {
+  if (isStandaloneApp()) {
+    setStatus("Already installed");
+    updateInstallButtonState();
+    return;
+  }
+
+  if (deferredInstallPrompt) {
+    await promptForInstall();
+    return;
+  }
+
+  showInstallPanel();
+}
+
+async function promptForInstall() {
+  const promptEvent = deferredInstallPrompt;
+  if (!promptEvent) {
+    showInstallPanel();
+    return;
+  }
+
+  promptEvent.prompt();
+  const choice = await promptEvent.userChoice.catch(() => null);
+  deferredInstallPrompt = null;
+  updateInstallButtonState();
+
+  if (choice?.outcome === "accepted") {
+    setStatus("App installed");
+  } else {
+    showInstallPanel();
+  }
+}
+
+function showInstallPanel() {
+  if (!elements.installOverlay) {
+    return;
+  }
+
+  const isAppleMobile = /iphone|ipad|ipod/i.test(navigator.userAgent || "");
+  if (elements.installCopy) {
+    elements.installCopy.textContent = isAppleMobile
+      ? "Add this planner to your home screen for a clean full-screen iPhone app."
+      : "Add this planner to your home screen for a cleaner full-screen app.";
+  }
+  if (elements.installConfirmButton) {
+    elements.installConfirmButton.textContent = deferredInstallPrompt ? "Install now" : "Got it";
+  }
+
+  elements.installOverlay.classList.remove("is-hidden");
+  document.body.classList.add("is-install-open");
+}
+
+function closeInstallPanel() {
+  elements.installOverlay?.classList.add("is-hidden");
+  document.body.classList.remove("is-install-open");
+}
+
+async function confirmInstallAction() {
+  if (deferredInstallPrompt) {
+    await promptForInstall();
+    return;
+  }
+  closeInstallPanel();
+}
+
 function toggleMenu() {
   const isOpen = elements.appMenu.classList.toggle("is-open");
   elements.menuBackdrop.classList.toggle("is-hidden", !isOpen);
@@ -504,8 +615,7 @@ function showPage(page, options = {}) {
 }
 
 function syncPageFromHash() {
-  const page = location.hash.replace("#", "");
-  showPage(page === "people" ? "people" : "planner", { updateHash: false });
+  showPage(getPageFromHash(), { updateHash: false });
 }
 
 function selectDate(dateIso, options = {}) {
@@ -1785,8 +1895,11 @@ function base64ToBytes(base64) {
 
 function registerServiceWorker() {
   if ("serviceWorker" in navigator && location.protocol !== "file:") {
-    navigator.serviceWorker.register("./sw.js").catch(() => {});
+    navigator.serviceWorker.register("./sw.js")
+      .then(registration => registration.update?.())
+      .catch(() => {});
   }
 }
 
+setupInstallExperience();
 boot();

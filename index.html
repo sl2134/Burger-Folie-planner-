@@ -13,10 +13,11 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="format-detection" content="telephone=no">
   <title>Burger Folie Timeplanning</title>
-  <link rel="manifest" href="./manifest.webmanifest?v=50">
+  <link rel="manifest" href="./manifest.webmanifest?v=51">
   <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
   <link rel="stylesheet" href="./app.css?v=50">
-  <link rel="stylesheet" href="./launch.css?v=50">
+  <link rel="stylesheet" href="./modern.css?v=51">
+  <link rel="stylesheet" href="./launch.css?v=51">
 </head>
 <body class="is-access-locked">
   <div class="launch-screen" id="launchScreen" aria-hidden="true">
@@ -158,6 +159,41 @@
   </header>
 
   <div class="menu-backdrop is-hidden" id="menuBackdrop"></div>
+
+  <nav class="mobile-tabbar" aria-label="Primary app navigation">
+    <button type="button" class="mobile-tab is-active" data-page="planner">
+      <span class="mobile-tab-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M8 3v3"></path>
+          <path d="M16 3v3"></path>
+          <path d="M4 9h16"></path>
+          <path d="M5 5h14v15H5z"></path>
+        </svg>
+      </span>
+      <span>Planner</span>
+    </button>
+    <button type="button" class="mobile-tab" data-page="people">
+      <span class="mobile-tab-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path>
+          <path d="M2.5 21a5.5 5.5 0 0 1 11 0"></path>
+          <path d="M17 8.5a3.5 5.5 0 1 0 0-7"></path>
+          <path d="M16 15.5a5.5 5.5 0 0 1 5.5 5.5"></path>
+        </svg>
+      </span>
+      <span>People</span>
+    </button>
+    <button type="button" class="mobile-tab" data-page="transfer">
+      <span class="mobile-tab-icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" focusable="false">
+          <path d="M12 3v12"></path>
+          <path d="M7 10l5 5 5-5"></path>
+          <path d="M5 19h14"></path>
+        </svg>
+      </span>
+      <span>Export</span>
+    </button>
+  </nav>
 
   <main>
     <section class="page-view people-page" id="peoplePage" data-page-view="people" aria-label="People page">
@@ -501,8 +537,9 @@
     </div>
   </div>
 
-  <script src="./app.js?v=50" defer></script>
-  <script src="./extras.js?v=50" defer></script>
-  <script src="./sync.js?v=50" defer></script>
+  <script src="./app.js?v=51" defer></script>
+  <script src="./modern.js?v=51" defer></script>
+  <script src="./extras.js?v=51" defer></script>
+  <script src="./sync.js?v=51" defer></script>
 </body>
 </html>

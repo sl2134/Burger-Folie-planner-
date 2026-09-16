@@ -3,19 +3,20 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#111111">
+  <meta name="theme-color" content="#f7f4ed">
+  <meta name="description" content="Burger Folie staff timeplanning app for shifts, exports, and calendar sharing.">
   <meta name="robots" content="noindex, nofollow">
   <meta name="referrer" content="no-referrer">
   <meta http-equiv="Content-Security-Policy" content="default-src 'self'; img-src 'self' data: blob:; style-src 'self'; script-src 'self'; connect-src 'self' https://api.github.com; object-src 'none'; base-uri 'self'; form-action 'none';">
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-title" content="BF Planner">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
   <meta name="format-detection" content="telephone=no">
   <title>Burger Folie Timeplanning</title>
-  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="manifest" href="./manifest.webmanifest?v=50">
   <link rel="apple-touch-icon" href="./assets/apple-touch-icon.png">
-  <link rel="stylesheet" href="./app.css?v=47">
-  <link rel="stylesheet" href="./launch.css?v=47">
+  <link rel="stylesheet" href="./app.css?v=50">
+  <link rel="stylesheet" href="./launch.css?v=50">
 </head>
 <body class="is-access-locked">
   <div class="launch-screen" id="launchScreen" aria-hidden="true">
@@ -76,20 +77,50 @@
         </div>
       </div>
       <button type="button" class="menu-link is-active" data-page="planner">
-        <span class="menu-link-icon" aria-hidden="true">P</span>
+        <span class="menu-link-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M8 3v3"></path>
+            <path d="M16 3v3"></path>
+            <path d="M4 9h16"></path>
+            <path d="M5 5h14v15H5z"></path>
+          </svg>
+        </span>
         <span>Planner</span>
       </button>
       <button type="button" class="menu-link" data-page="people">
-        <span class="menu-link-icon" aria-hidden="true">T</span>
+        <span class="menu-link-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M8 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8z"></path>
+            <path d="M2.5 21a5.5 5.5 0 0 1 11 0"></path>
+            <path d="M17 8.5a3.5 3.5 0 1 0 0-7"></path>
+            <path d="M16 15.5a5.5 5.5 0 0 1 5.5 5.5"></path>
+          </svg>
+        </span>
         <span>People</span>
       </button>
-      <button type="button" class="menu-link" data-transfer-page="transfer">
-        <span class="menu-link-icon" aria-hidden="true">E</span>
+      <button type="button" class="menu-link" data-page="transfer">
+        <span class="menu-link-icon" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 3v12"></path>
+            <path d="M7 10l5 5 5-5"></path>
+            <path d="M5 19h14"></path>
+          </svg>
+        </span>
         <span>Export Data</span>
       </button>
     </nav>
 
     <div class="header-actions" aria-label="Export actions">
+      <button type="button" class="button ghost action-button install-action" id="installAppButton">
+        <span class="button-icon icon-install" aria-hidden="true">
+          <svg viewBox="0 0 24 24" focusable="false">
+            <path d="M12 3v11"></path>
+            <path d="M8 10l4 4 4-4"></path>
+            <path d="M5 19h14"></path>
+          </svg>
+        </span>
+        <span class="button-text">Install App</span>
+      </button>
       <button type="button" class="button primary action-button" id="pdfButton">
         <span class="button-icon icon-pdf" aria-hidden="true">
           <svg viewBox="0 0 24 24" focusable="false">
@@ -376,6 +407,26 @@
     </div>
   </div>
 
+  <div class="install-overlay is-hidden" id="installOverlay" role="dialog" aria-modal="true" aria-labelledby="installTitle">
+    <div class="install-card">
+      <div class="share-head">
+        <div>
+          <p class="eyebrow">App</p>
+          <h2 id="installTitle">Install Burger Folie</h2>
+        </div>
+        <button type="button" class="icon-button" id="closeInstallOverlayButton" aria-label="Close install window">×</button>
+      </div>
+      <p class="install-copy" id="installCopy">Add this planner to your home screen for a cleaner full-screen app.</p>
+      <div class="install-steps">
+        <span>1</span>
+        <p>Open the browser share menu.</p>
+        <span>2</span>
+        <p>Choose Add to Home Screen.</p>
+      </div>
+      <button type="button" class="button primary install-confirm" id="installConfirmButton">Install now</button>
+    </div>
+  </div>
+
   <div class="share-overlay is-hidden" id="shareOverlay" role="dialog" aria-modal="true" aria-labelledby="shareTitle">
     <div class="share-card">
       <div class="share-head">
@@ -450,8 +501,8 @@
     </div>
   </div>
 
-  <script src="./app.js?v=49" defer></script>
-  <script src="./extras.js?v=47" defer></script>
-  <script src="./sync.js?v=1" defer></script>
+  <script src="./app.js?v=50" defer></script>
+  <script src="./extras.js?v=50" defer></script>
+  <script src="./sync.js?v=50" defer></script>
 </body>
 </html>
